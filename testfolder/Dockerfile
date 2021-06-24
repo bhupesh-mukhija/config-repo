@@ -1,8 +1,8 @@
 # Container image that runs your code
-FROM alpine:3.10
+FROM alpine:3.14
 
-ARG SFDX_INSTALLER=sfdx-linux-amd64.tar.xz
-ARG SFDX_URL=https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+ARG SFDX_INSTALLER=sfdx-linux-x64.tar.xz
+ARG SFDX_URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY entrypoint.sh /entrypoint.sh
@@ -11,14 +11,24 @@ COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 # not using --update option in adding curl "https://github.com/gliderlabs/docker-alpine/blob/master/docs/usage.md"
-# use sfdx 
+# use sfdx
 RUN apk update \
-    && apk add --no-cache curl \
-    && apk add jq \
-    && rm -rf /var/cache/apk/* \
-    && mkdir sfdx \
+    && apk add --no-cache \
+                    bash \
+                    curl \
+                    tzdata \
+                    xz \
+                    jq \
+                    npm
+
+RUN mkdir ~/sfdx \
+    && ls -l root/ \
     && wget $SFDX_URL \
-    && tar xJf $SFDX_INSTALLER -C sfdx --strip-components 1 \
-    && ./sfdx/install \
-    && rm -r sfdx \
+    && tar xJf $SFDX_INSTALLER -C ~/sfdx --strip-components 1 \
+    && PATH=~/sfdx/bin:$PATH \
+    && which sfdx \
+    && rm ~/sfdx/bin/node \
+    && ln -s /usr/local/bin/node ~/sfdx/bin/node \
+    && sfdx --version \
+    && sfdx plugins --core \
     && apk del curl
