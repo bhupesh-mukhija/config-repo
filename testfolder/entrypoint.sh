@@ -7,5 +7,5 @@ echo "::set-output name=time::$time"
 export PATH=~/sfdx/bin:$PATH
 which jq
 jq --version
-which sfdx
+#which sfdx
 sfdx --version
