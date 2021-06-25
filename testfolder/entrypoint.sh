@@ -9,4 +9,6 @@ which jq
 jq --version
 #which sfdx
 /root/sfdx/bin/sfdx --version
-sfdx --version
+ls -l
+ls -l /github/home
+ls -l /github/workflow
