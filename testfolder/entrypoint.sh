@@ -4,8 +4,9 @@ echo "Hello $1"
 echo "Hello $2"
 time=$(date)
 echo "::set-output name=time::$time"
-export PATH=~/sfdx/bin:$PATH
+PATH=~/sfdx/bin:$PATH
 which jq
 jq --version
 #which sfdx
+/root/sfdx/bin/sfdx --version
 sfdx --version
