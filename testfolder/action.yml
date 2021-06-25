@@ -17,5 +17,5 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{secrets.DEV_HUB}}
+    - ${{ inputs.dev-hub }}
     #- ${{ inputs.param2 }}
