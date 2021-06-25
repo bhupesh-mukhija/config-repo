@@ -1,21 +1,21 @@
 # action.yml
-name: 'Hello World'
+name: 'Create DX Package'
 description: 'Greet someone and record the time'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  param1:  # id of input
+    description: 'first parameter'
     required: true
-    default: 'World'
-  not-to-greet:
-    description: 'Another argument'
-    required: true
-    default: 'None'
-outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+    default: 'Parameter 1'
+  #not-to-greet:
+    #description: 'Another argument'
+    #required: true
+    #default: 'None'
+#outputs:
+  #time: # id of output
+    #description: 'The time we greeted you'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.who-to-greet }}
-    - ${{ inputs.not-to-greet }}
+    - ${{ inputs.param1 }}
+    #- ${{ inputs.param2 }}

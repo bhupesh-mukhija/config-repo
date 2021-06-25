@@ -9,5 +9,3 @@ which jq
 jq --version
 which sfdx
 sfdx --version
-touch /testhome/test/super.log
-ls -l /testhome/test
