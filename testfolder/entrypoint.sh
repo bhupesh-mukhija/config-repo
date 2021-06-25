@@ -9,6 +9,15 @@ which jq
 jq --version
 #which sfdx
 /root/sfdx/bin/sfdx --version
+echo "Current"
 ls -l
+echo "github"
+ls -l /github
+echo "github/home"
 ls -l /github/home
+echo "github/workflow"
 ls -l /github/workflow
+echo "../"
+ls -l ../
+echo "../../"
+ls -l ../../
