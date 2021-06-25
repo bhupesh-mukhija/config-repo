@@ -31,4 +31,5 @@ RUN mkdir ~/sfdx \
     && ln -s /usr/local/bin/node ~/sfdx/bin/node \
     && sfdx --version \
     && sfdx plugins --core \
-    && apk del curl
+    && apk del curl \
+    && rm $SFDX_INSTALLER

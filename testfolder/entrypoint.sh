@@ -9,6 +9,8 @@ which jq
 jq --version
 #which sfdx
 /root/sfdx/bin/sfdx --version
+alias sfdx=/root/sfdx/bin/sfdx
+sfdx --version
 echo "Current"
 ls -l
 echo "github"
