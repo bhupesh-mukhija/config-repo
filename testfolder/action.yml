@@ -2,8 +2,8 @@
 name: 'Create DX Package'
 description: 'Greet someone and record the time'
 inputs:
-  param1:  # id of input
-    description: 'first parameter'
+  dev-hub:  # id of input
+    description: 'Dev hub secret for authrization in container'
     required: true
     default: 'Parameter 1'
   #not-to-greet:
@@ -17,5 +17,5 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.param1 }}
+    - ${{ secrets.DEV_HUB }}
     #- ${{ inputs.param2 }}

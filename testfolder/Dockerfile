@@ -12,7 +12,7 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 # not using --update option in adding curl "https://github.com/gliderlabs/docker-alpine/blob/master/docs/usage.md"
 # use sfdx
-RUN apk update \
+RUN    apk update \
     && apk add --no-cache \
                     bash \
                     curl \
@@ -21,7 +21,8 @@ RUN apk update \
                     jq \
                     npm
 
-RUN mkdir ~/sfdx \
+RUN    mkdir ~/sfdx \
+    && mkdir ~/secrets \
     && ls -l root/ \
     && wget $SFDX_URL \
     && tar xJf $SFDX_INSTALLER -C ~/sfdx --strip-components 1 \
@@ -30,6 +31,5 @@ RUN mkdir ~/sfdx \
     && rm ~/sfdx/bin/node \
     && ln -s /usr/local/bin/node ~/sfdx/bin/node \
     && sfdx --version \
-    && sfdx plugins --core \
     && apk del curl \
     && rm $SFDX_INSTALLER
