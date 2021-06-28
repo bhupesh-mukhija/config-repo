@@ -12,6 +12,7 @@ PATH=~/sfdx/bin:$PATH
 # creating alias in case path is not set in actions runner
 alias sfdx=/root/sfdx/bin/sfdx
 sfdx --version
+/root/sfdx/bin/sfdx --version
 TARGETDEVHUBUSERNAME="devhubuser"
 # TODO: DISABLE FOR ACTION
 #TARGETDEVHUBUSERNAME="sagegroup"
