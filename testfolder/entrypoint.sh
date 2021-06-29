@@ -12,14 +12,12 @@ PATH=/root/sfdx/bin:$PATH
 sfdx --version
 # creating alias in case path is not set in actions runner
 # does not work in
-alias sfdx=/root/sfdx/bin/sfdx
-/root/sfdx/bin/sfdx --version
 TARGETDEVHUBUSERNAME="devhubuser"
 # TODO: DISABLE FOR ACTION
 #TARGETDEVHUBUSERNAME="sagegroup"
 echo "Authorize Devhub..."
 echo $1 > /root/secrets/devhub.txt
-/root/sfdx/bin/sfdx auth:sfdxurl:store --sfdxurlfile=/root/secrets/devhub.txt --setalias=$TARGETDEVHUBUSERNAME
+sfdx auth:sfdxurl:store --sfdxurlfile=/root/secrets/devhub.txt --setalias=$TARGETDEVHUBUSERNAME
 SFDX_JSON=$(</github/workspace/sfdx-project.json)
 # TODO: DISABLE FOR ACTION
 #SFDX_JSON=$(<../../sfdx-project.json)
