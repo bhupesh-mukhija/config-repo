@@ -47,7 +47,7 @@ else
         P_VERSION_SFDX_JSON=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.package == \"$P_NAME\")) | .[0].versionNumber" | cut -d "." -f1,2,3)
         echo $P_VERSION_SFDX_JSON
         #if [ $P_VERSION_DEVHUB = $P_VERSION_SFDX_JSON ] && [ $(jq -r ".result.records[0].IsReleased" <<< $PACKAGE_INFO) = "true" ];
-        if [ $P_VERSION_DEVHUB = $P_VERSION_SFDX_JSON ]
+        if [ "$P_VERSION_DEVHUB" = "$P_VERSION_SFDX_JSON" ]
         then
             echo "Devhub version equals sfdx json version"
             echo $(echo $PACKAGE_INFO | jq -r ".result.records[0].IsReleased")
