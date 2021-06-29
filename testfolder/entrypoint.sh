@@ -13,6 +13,7 @@ sfdx --version
 # creating alias in case path is not set in actions runner
 # does not work in
 TARGETDEVHUBUSERNAME="devhubuser"
+echo $TARGETDEVHUBUSERNAME
 # TODO: DISABLE FOR ACTION
 #TARGETDEVHUBUSERNAME="sagegroup"
 echo "Authorize Devhub..."
