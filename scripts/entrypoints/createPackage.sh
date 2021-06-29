@@ -1,11 +1,5 @@
-#!/bin/bash
-queryPackageByName() {
-    local PACKAGE_QUERY_FIELDS=" Id, Name, Package2Id, Tag, Package2.Name, SubscriberPackageVersion.Dependencies, IsReleased, MajorVersion, MinorVersion, PatchVersion, CreatedDate, LastModifiedDate, AncestorId, Ancestor.MajorVersion, Ancestor.MinorVersion, Ancestor.PatchVersion "
-    local QUERY_RESULT=$(sfdx force:data:soql:query -u $TARGETDEVHUBUSERNAME -t \
-        -q "SELECT $PACKAGE_QUERY_FIELDS FROM Package2Version WHERE Package2.Name = '$1' ORDER BY LastModifiedDate DESC, CreatedDate DESC LIMIT 1" \
-        --json)
-    echo $QUERY_RESULT
-}
+#!/bin/sh
+source "../bash/utility.sh"
 
 # setting path, this is not working in actions runner
 PATH=/root/sfdx/bin:$PATH
@@ -58,6 +52,10 @@ else
             fi
         else
             echo "Devhub version not equals sfdx json version"
+            if []
+            then
+            else
+            fi
         fi
     fi
 fi
