@@ -7,7 +7,7 @@ ARG SFDX_URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/channels
 RUN mkdir ~/scripts
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
-COPY scripts/ ~/scripts
+COPY ./scripts/ ~/scripts
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
 ENTRYPOINT ["~/scripts/entrypoints/createPackage.sh"]
@@ -23,7 +23,9 @@ RUN    apk update \
                     jq \
                     npm
 
-RUN    mkdir ~/sfdx \
+RUN    ls -l /root/scripts/ \
+    && echo "*****************************************" \
+    && mkdir ~/sfdx \
     && mkdir ~/secrets \
     && ls -l root/ \
     && wget $SFDX_URL \
@@ -34,5 +36,4 @@ RUN    mkdir ~/sfdx \
     && ln -s /usr/local/bin/node ~/sfdx/bin/node \
     && sfdx --version \
     && apk del curl \
-    && rm $SFDX_INSTALLER \
-    && ls -l ~/scripts
+    && rm $SFDX_INSTALLER
