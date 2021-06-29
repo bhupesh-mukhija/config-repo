@@ -5,7 +5,7 @@ ARG SFDX_INSTALLER=sfdx-linux-x64.tar.xz
 ARG SFDX_URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
 
 RUN mkdir ~/scripts \
-    ls -l
+    && ls -l
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY /github/workspace/config/scripts ~/scripts
