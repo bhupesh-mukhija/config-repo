@@ -1,6 +1,4 @@
 #!/bin/sh
-source "/root/scripts/bash/utility.sh"
-
 authorizeDevHub() {
     TARGETDEVHUBUSERNAME="devhubuser"
     echo $TARGETDEVHUBUSERNAME
