@@ -7,16 +7,12 @@ ARG SFDX_URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/channels
 RUN mkdir /root/entrypoint
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
-#COPY createPackage.sh /createPackage.sh
 COPY entrypoint.sh /root/entrypoint/entrypoint.sh
-#COPY scripts/bash/utility.sh /root/scripts/bash/utility.sh
 
-# Code file to execute when the docker container starts up (`entrypoint.sh`)
-# entrypoint path is depneding on github action, change required for local
+# code file to execute when the docker container starts up
 ENTRYPOINT ["/root/entrypoint/entrypoint.sh"]
 
 # not using --update option in adding curl "https://github.com/gliderlabs/docker-alpine/blob/master/docs/usage.md"
-# use sfdx
 RUN    apk update \
     && apk add --no-cache \
                     bash \

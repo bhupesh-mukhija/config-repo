@@ -1,6 +1,6 @@
 # action.yml
-name: 'Create DX Package'
-description: 'Greet someone and record the time'
+name: 'Create Package Version'
+description: 'Create package version for current repo'
 inputs:
   dev-hub:  # id of input
     description: 'Dev hub secret for authrization in container'

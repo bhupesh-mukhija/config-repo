@@ -99,10 +99,16 @@ function readParams {
     done
 }
 
-queryPackageByName() {
+function queryPackageByName() {
     local PACKAGE_QUERY_FIELDS=" Id, Name, Package2Id, Tag, Package2.Name, SubscriberPackageVersion.Dependencies, IsReleased, MajorVersion, MinorVersion, PatchVersion, CreatedDate, LastModifiedDate, AncestorId, Ancestor.MajorVersion, Ancestor.MinorVersion, Ancestor.PatchVersion "
     local QUERY_RESULT=$(sfdx force:data:soql:query -u $TARGETDEVHUBUSERNAME -t \
         -q "SELECT $PACKAGE_QUERY_FIELDS FROM Package2Version WHERE Package2.Name = '$1' ORDER BY LastModifiedDate DESC, CreatedDate DESC LIMIT 1" \
         --json)
     echo $QUERY_RESULT
+}
+
+function authorizeOrg() {
+    echo "Authorizing org..."
+    echo $1 > /root/secrets/devhub.txt
+    sfdx auth:sfdxurl:store --sfdxurlfile=/root/secrets/devhub.txt --setalias=$2
 }

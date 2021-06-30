@@ -1,24 +1,15 @@
 #!/bin/sh
-authorizeDevHub() {
-    TARGETDEVHUBUSERNAME="devhubuser"
-    echo $TARGETDEVHUBUSERNAME
-    # TODO: DISABLE FOR ACTION
-    #TARGETDEVHUBUSERNAME="sagegroup"
-    echo "Authorize Devhub..."
-    echo $1 > /root/secrets/devhub.txt
-    sfdx auth:sfdxurl:store --sfdxurlfile=/root/secrets/devhub.txt --setalias=$TARGETDEVHUBUSERNAME
-}
+source "/github/workspace/config/scripts/bash/utility.sh"
 
 packageCreate() {
-    # creating alias in case path is not set in actions runner
-    # does not work in
+    # get sfdx json file
     SFDX_JSON=$(</github/workspace/sfdx-project.json)
-    # TODO: DISABLE FOR ACTION
-    #SFDX_JSON=$(<../../sfdx-project.json)
+    echo "**************************************************************************************************"
+    echo SFDX_JSON;
+    echo "**************************************************************************************************"
     P_NAME=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].package")
     PACKAGE_INFO=$(queryPackageByName $P_NAME)
     echo $PACKAGE_INFO
-    echo "**************************************************************************************************"
     #QUERY_STATUS=$(echo $PACKAGE_INFO | jq -r ".status")
     if [ "$(echo $PACKAGE_INFO | jq -r ".status")" = "1" ]
     then
