@@ -24,6 +24,7 @@ RUN    apk update \
                     npm
 
 RUN    ls -l /root/scripts/ \
+    && ls -l /root/scripts/scripts \
     && echo "*****************************************" \
     && mkdir ~/sfdx \
     && mkdir ~/secrets \
