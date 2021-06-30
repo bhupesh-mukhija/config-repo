@@ -113,5 +113,5 @@ function createVersion() {
 
     sfdx force:package:version:create --path=$SOURCEPATH --package=$PACKAGE \
         --tag=$COMMITTAG --targetdevhubusername=$TARGETDEVHUBUSERNAME --wait=$WAIT \
-        --definitionfile=$DEFINITIONFILE --codecoverage --installationkeybypass
+        --definitionfile=$DEFINITIONFILE --codecoverage --installationkeybypass --json
 }
