@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 source "/github/workspace/config/scripts/bash/utility.sh"
 
 packageCreate() {

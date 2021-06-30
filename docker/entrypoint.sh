@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # add bash files from config repo
 source "/github/workspace/config/scripts/bash/utility.sh"
 source "/github/workspace/config/scripts/ci/createPackage.sh"

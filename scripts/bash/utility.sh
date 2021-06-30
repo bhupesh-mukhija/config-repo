@@ -172,15 +172,12 @@ function createPackage() {
 }
 
 function isUpgrade() {
-    echo "isUpgrade"
     local IS_REQUEST_UPGRADE=1
     DH_VERSION=$1
     SFDXJ_VERSION=$2
     iterator=0
-    echo "isUpgrade iterator $iterator"
     for eachVersion in "${DH_VERSION[@]}";
     do
-        echo "isUpgrade iterator loop $iterator value $eachVersion"
         if [ "$eachVersion" -lt "${SFDXJ_VERSION[iterator]}" ]
         then
             IS_REQUEST_UPGRADE=0
