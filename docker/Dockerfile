@@ -20,7 +20,8 @@ RUN    apk update \
                     tzdata \
                     xz \
                     jq \
-                    npm
+                    npm \
+                    git
 
 RUN    mkdir ~/sfdx \
     && mkdir ~/secrets \
