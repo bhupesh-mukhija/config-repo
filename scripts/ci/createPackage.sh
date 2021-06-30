@@ -42,6 +42,7 @@ packageCreate() {
             else
                 echo "Requested package version (sfdx-project.json) and latest devhub version are not same"
                 # check if the package version requested is downgrading
+                echo $(isUpgrade ${P_VERSION_DEVHUB//"."/} ${P_VERSION_SFDX_JSON//"."/})
                 if [ "$(isUpgrade ${P_VERSION_DEVHUB//"."/ } ${P_VERSION_SFDX_JSON//"."/ })" = "1" ]
                 then
                     # create package version as it is upgrading
