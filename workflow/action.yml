@@ -5,17 +5,8 @@ inputs:
   dev-hub:  # id of input
     description: 'Dev hub secret for authrization in container'
     required: true
-    default: 'Parameter 1'
-  #not-to-greet:
-    #description: 'Another argument'
-    #required: true
-    #default: 'None'
-#outputs:
-  #time: # id of output
-    #description: 'The time we greeted you'
 runs:
   using: 'docker'
   image: 'docker/Dockerfile'
   args:
     - ${{ inputs.dev-hub }}
-    #- ${{ inputs.param2 }}

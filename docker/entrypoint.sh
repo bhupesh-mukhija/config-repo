@@ -6,10 +6,5 @@ source "/github/workspace/config/scripts/ci/createPackage.sh"
 PATH=/root/sfdx/bin:$PATH
 sfdx --version
 
-ls -l
-ls -l /github/workspace
-ls -l /github/workspace/config
-ls -l /github/workspace/config/scripts
-
 authorizeDevHub $1
 packageCreate
