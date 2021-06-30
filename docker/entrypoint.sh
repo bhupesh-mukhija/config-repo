@@ -1,10 +1,13 @@
 #!/bin/sh
+# add bash files from config repo
 source "/github/workspace/config/scripts/bash/utility.sh"
 source "/github/workspace/config/scripts/ci/createPackage.sh"
 
-# setting path, this is not working in actions runner
+# set path for sfdx
 PATH=/root/sfdx/bin:$PATH
 sfdx --version
+sdfx plugins --core
 
-authorizeDevHub $1
+TARGETDEVHUBUSERNAME="devhubuser"
+authorizeOrg $1 $TARGETDEVHUBUSERNAME
 packageCreate

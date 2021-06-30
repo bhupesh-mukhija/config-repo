@@ -5,9 +5,9 @@ packageCreate() {
     # get sfdx json file
     SFDX_JSON=$(</github/workspace/sfdx-project.json)
     echo "**************************************************************************************************"
-    echo SFDX_JSON;
+    echo $SFDX_JSON;
     echo "**************************************************************************************************"
-    P_NAME=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].package")
+    P_NAME=$(echo $cdSFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].package")
     PACKAGE_INFO=$(queryPackageByName $P_NAME)
     echo $PACKAGE_INFO
     #QUERY_STATUS=$(echo $PACKAGE_INFO | jq -r ".status")
