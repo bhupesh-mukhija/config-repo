@@ -39,9 +39,8 @@ packageCreate() {
                 fi
             else
                 echo "Devhub version not equals sfdx json version"
-                ls -l
-                echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path"
                 # TODO: only allow minor/major/patch versions upgrades
+                # TODO: Check if dependencis do not match the latest ones
                 RESPONSE=$(createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
                     --package $P_NAME --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME --wait 30 --definitionfile $DEFINITIONFILE)
                 sendTeamsNotification
