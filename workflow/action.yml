@@ -5,7 +5,6 @@ inputs:
   dev-hub:  # id of input
     description: 'Dev hub secret for authrization in container'
     required: true
-    default: ${{ secrets.DEV_HUB_CONFIG }}
 runs:
   using: 'docker'
   image: '../docker/Dockerfile'
