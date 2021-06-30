@@ -1,5 +1,5 @@
 #!/bin/sh
-source "~/scripts/bash/utility.sh"
+source "/root/scripts/bash/utility.sh"
 
 # setting path, this is not working in actions runner
 PATH=/root/sfdx/bin:$PATH
