@@ -42,8 +42,9 @@ packageCreate() {
                 ls -l
                 echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path"
                 # TODO: only allow minor/major/patch versions upgrades
-                createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
-                    --package $P_NAME --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME --wait 30 --definitionfile $DEFINITIONFILE
+                RESPONSE=$(createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
+                    --package $P_NAME --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME --wait 30 --definitionfile $DEFINITIONFILE)
+                sendTeamsNotification
             fi
         fi
     fi
