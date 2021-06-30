@@ -11,7 +11,7 @@ RUN     mkdir /root/scripts \
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY createPackage.sh /createPackage.sh
 COPY createPackage.sh /root/scripts/entrypoints/createPackage.sh
-COPY scripts/bash.utility.sh /root/scripts/bash/utility.sh
+COPY scripts/bash/utility.sh /root/scripts/bash/utility.sh
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
 # entrypoint path is depneding on github action, change required for local
