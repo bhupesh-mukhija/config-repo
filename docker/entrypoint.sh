@@ -11,7 +11,5 @@ ls -l /github/workspace
 ls -l /github/workspace/config
 ls -l /github/workspace/config/scripts
 
-readParams "$@"
-
-authorizeDevHub
+authorizeDevHub $1
 packageCreate
