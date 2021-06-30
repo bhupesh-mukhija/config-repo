@@ -6,7 +6,7 @@ source "/github/workspace/config/scripts/ci/createPackage.sh"
 # set path for sfdx
 PATH=/root/sfdx/bin:$PATH
 sfdx --version
-sdfx plugins --core
+sfdx plugins --core
 
 TARGETDEVHUBUSERNAME="devhubuser"
 authorizeOrg $1 $TARGETDEVHUBUSERNAME
