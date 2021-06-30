@@ -48,11 +48,6 @@ function readParams {
                 shift # past argument
                 shift # past value
             ;;
-            -r|--path)
-                PATH="$2"
-                shift # past argument
-                shift # past value
-            ;;
             -t|--packagetype)
                 PACKAGETYPE="$2"
                 shift # past argument
@@ -78,7 +73,7 @@ function readParams {
                 shift # past argument
                 shift # past value
             ;;
-            -w|--WAIT)
+            -w|--wait)
                 WAIT="$2"
                 shift # past argument
                 shift # past value
@@ -111,4 +106,12 @@ function authorizeOrg() {
     echo "Authorizing org..."
     echo $1 > /root/secrets/devhub.txt
     sfdx auth:sfdxurl:store --sfdxurlfile=/root/secrets/devhub.txt --setalias=$2
+}
+
+function createVersion() {
+    readParams "$@"
+
+    sfdx force:package:version:create --path=$SOURCEPATH --package=$PACKAGE \
+        --tag=$COMMITTAG --targetdevhubusername=$TARGETDEVHUBUSERNAME --wait=$WAIT \
+        --definitionfile=$DEFINITIONFILE --codecoverage --installationkeybypass
 }
