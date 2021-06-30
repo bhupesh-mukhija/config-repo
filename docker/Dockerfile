@@ -4,12 +4,12 @@ FROM alpine:3.14
 ARG SFDX_INSTALLER=sfdx-linux-x64.tar.xz
 ARG SFDX_URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
 
-RUN     mkdir /root/scripts \
+RUN    mkdir /root/scripts \
     && mkdir /root/scripts/bash \
     && mkdir /root/scripts/entrypoints
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
-COPY createPackage.sh /createPackage.sh
+#COPY createPackage.sh /createPackage.sh
 COPY createPackage.sh /root/scripts/entrypoints/createPackage.sh
 COPY scripts/bash/utility.sh /root/scripts/bash/utility.sh
 

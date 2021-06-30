@@ -52,10 +52,10 @@ else
             fi
         else
             echo "Devhub version not equals sfdx json version"
-            if []
-            then
-            else
-            fi
+            #if []
+            #then
+            #else
+            #fi
         fi
     fi
 fi
