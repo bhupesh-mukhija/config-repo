@@ -14,7 +14,8 @@ COPY createPackage.sh ~/scripts/entrypoints/createPackage.sh
 COPY createPackage.sh ~/scripts/bash/utility.sh
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
-ENTRYPOINT ["~/scripts/entrypoints/createPackage.sh"]
+# entrypoint path is depneding on github action, change required for local
+ENTRYPOINT ["./~/scripts/entrypoints/createPackage.sh"]
 
 # not using --update option in adding curl "https://github.com/gliderlabs/docker-alpine/blob/master/docs/usage.md"
 # use sfdx
