@@ -13,8 +13,6 @@ COPY createPackage.sh /createPackage.sh
 COPY createPackage.sh ~/scripts/entrypoints/createPackage.sh
 COPY createPackage.sh ~/scripts/bash/utility.sh
 
-RUN chmod 755 ~/scripts/entrypoints/createPackage.sh
-
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
 # entrypoint path is depneding on github action, change required for local
 ENTRYPOINT ["/root/scripts/entrypoints/createPackage.sh"]
