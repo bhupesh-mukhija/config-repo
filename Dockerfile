@@ -24,7 +24,6 @@ RUN    apk update \
                     npm
 
 RUN    ls -l /root/scripts/ \
-    && ls -l /root/scripts/scripts \
     && echo "*****************************************" \
     && find find . -name createPackage.sh \
     && echo "*****************************************" \
