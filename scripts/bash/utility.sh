@@ -58,13 +58,8 @@ function readParams {
                 shift # past argument
                 shift # past value
             ;;
-            -vd|--versiondescription)
-                VERSIONDESCRIPTION="$2"
-                shift # past argument
-                shift # past value
-            ;;
-            -vd|--versiondescription)
-                VERSIONDESCRIPTION="$2"
+            -vn|--versionnumber)
+                VERSIONNUMBER="$2"
                 shift # past argument
                 shift # past value
             ;;
@@ -94,6 +89,48 @@ function readParams {
     done
 }
 
+# read parameters for local implementation
+function readParamsNotificationParams() {
+    while [[ $# -gt 0 ]] # for each positional parameter
+    do key="$1"
+        case "$key" in
+            -WEBHOOKURL|--url) # matching argument with sfdx standards
+                WEBHOOKURL="$2"
+                shift # past argument
+                shift # past value
+            ;;
+            -c|--themecolour) # matching argument with sfdx standards
+                COLOUR="$2"
+                shift # past argument
+                shift # past value
+            ;;
+            -t|--title) # matching argument with sfdx standards
+                TITLE="$2"
+                shift # past argument
+                shift # past value
+            ;;
+            -st|--subtitle) # matching argument with sfdx standards
+                SUBTITLE="$2"
+                shift # past argument
+                shift # past value
+            ;;
+            -s|--status) # matching argument with sfdx standards
+                STATUS="$2"
+                shift # past argument
+                shift # past value
+            ;;
+            -c|--comments) # matching argument with sfdx standards
+                STATUS="$2"
+                shift # past argument
+                shift # past value
+            ;;
+            *) # unknown option
+                shift # past argument
+            ;;
+        esac
+    done
+}
+
 function queryPackageByName() {
     local PACKAGE_QUERY_FIELDS=" Id, Name, Package2Id, Tag, Package2.Name, SubscriberPackageVersion.Dependencies, IsReleased, MajorVersion, MinorVersion, PatchVersion, CreatedDate, LastModifiedDate, AncestorId, Ancestor.MajorVersion, Ancestor.MinorVersion, Ancestor.PatchVersion "
     local QUERY_RESULT=$(sfdx force:data:soql:query -u $TARGETDEVHUBUSERNAME -t \
@@ -110,8 +147,7 @@ function authorizeOrg() {
 
 function createVersion() {
     readParams "$@"
-
-    echo $(sfdx force:package:version:create --path=$SOURCEPATH --package=$PACKAGE \
+    echo $(sfdx force:package:version:create --path=$SOURCEPATH --package=$PACKAGENAME \
         --tag=$COMMITTAG --targetdevhubusername=$TARGETDEVHUBUSERNAME --wait=$WAIT \
         --definitionfile=$DEFINITIONFILE --codecoverage --installationkeybypass --json)
 }
@@ -123,5 +159,35 @@ function sendTeamsNotification() {
     JSON="{\"title\": \"HERE\", \"themeColor\": \"RED\", \"text\": \"MESSGE TEAMS\" }"
 
     # Post to Microsoft Teams.
-    curl -H "Content-Type: application/json" -d "${JSON}" "${WEBHOOK_URL}"
+    echo $(curl -sb -H "Content-Type: application/json" -d "${JSON}" "${WEBHOOK_URL}")
+}
+
+function createPackage() {
+    readParams "$@"
+
+    RESPONS=$(sfdx force:package:create --path=$SOURCEPATH --name=$PACKAGENAME \
+        --description=$DESCRIPTION --packagetype=$PACKAGETYPE --targetdevhubusername=$TARGETDEVHUBUSERNAME --json)
+    echo $RESPONSE
+    #TODO: ON SUCCESS COMMIT SFDX JSON AND CREATE VERSION
+}
+
+function isUpgrade() {
+    local IS_REQUEST_UPGRADE=1
+    DH_VERSION=$1
+    SFDXJ_VERSION=$2
+    iterator=0
+    for val in "${DH_VERSION[@]}";
+    do
+        if [ "$val" -lt "${SFDXJ_VERSION[iterator]}" ]
+        then
+            IS_REQUEST_UPGRADE=0
+            break;
+        fi
+        iterator=$((iterator+1))
+    done
+    echo $IS_REQUEST_UPGRADE
+}
+
+function prepareNotificationJson() {
+    local JSON_NOTIFICATION="{}"
 }
