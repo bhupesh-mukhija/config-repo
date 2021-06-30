@@ -7,7 +7,7 @@ ARG SFDX_URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/channels
 RUN mkdir ~/scripts
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
-COPY ./scripts/ ~/scripts
+COPY scripts/ ~/scripts
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
 ENTRYPOINT ["~/scripts/entrypoints/createPackage.sh"]
