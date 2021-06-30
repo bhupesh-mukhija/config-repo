@@ -3,7 +3,7 @@ source "/github/workspace/config/scripts/bash/utility.sh"
 
 packageCreate() {
     # get sfdx json file
-    SFDX_JSON=$(echo /github/workspace/sfdx-project.json)
+    SFDX_JSON=$(cat /github/workspace/sfdx-project.json)
     echo "**************************************************************************************************"
     echo $SFDX_JSON;
     echo "**************************************************************************************************"
