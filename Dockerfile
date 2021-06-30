@@ -4,18 +4,20 @@ FROM alpine:3.14
 ARG SFDX_INSTALLER=sfdx-linux-x64.tar.xz
 ARG SFDX_URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
 
-RUN     mkdir ~/scripts \
-    && mkdir ~/scripts/bash \
-    && mkdir ~/scripts/entrypoints
+RUN     mkdir /root/scripts \
+    && mkdir /root/scripts/bash \
+    && mkdir /root/scripts/entrypoints
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY createPackage.sh /createPackage.sh
 COPY createPackage.sh ~/scripts/entrypoints/createPackage.sh
 COPY createPackage.sh ~/scripts/bash/utility.sh
 
+RUN chmod 755 ~/scripts/entrypoints/createPackage.sh
+
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
 # entrypoint path is depneding on github action, change required for local
-ENTRYPOINT ["~/scripts/entrypoints/createPackage.sh"]
+ENTRYPOINT ["/root/scripts/entrypoints/createPackage.sh"]
 
 # not using --update option in adding curl "https://github.com/gliderlabs/docker-alpine/blob/master/docs/usage.md"
 # use sfdx
