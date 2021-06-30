@@ -7,7 +7,7 @@ packageCreate() {
     echo "**************************************************************************************************"
     echo $SFDX_JSON;
     echo "**************************************************************************************************"
-    P_NAME=$(echo $cdSFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].package")
+    P_NAME=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].package")
     PACKAGE_INFO=$(queryPackageByName $P_NAME)
     echo $PACKAGE_INFO
     #QUERY_STATUS=$(echo $PACKAGE_INFO | jq -r ".status")
@@ -19,7 +19,6 @@ packageCreate() {
         # TODO: ERROR HANDLING - send emails or post to teams channel
     else
         echo "PACKAGE QUERY SUCCESSFUL"
-        #RETURN_SIZE=$(echo $PACKAGE_INFO | jq ".result.totalSize")
         if [ "$(echo $PACKAGE_INFO | jq ".result.totalSize")" = "0" ]
         then
             echo "$P_NAME not found"
