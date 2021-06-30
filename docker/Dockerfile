@@ -13,7 +13,7 @@ COPY entrypoint.sh /root/entrypoint/entrypoint.sh
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
 # entrypoint path is depneding on github action, change required for local
-ENTRYPOINT ["/root/scripts/entrypoint.sh"]
+ENTRYPOINT ["/root/entrypoint/entrypoint.sh"]
 
 # not using --update option in adding curl "https://github.com/gliderlabs/docker-alpine/blob/master/docs/usage.md"
 # use sfdx
