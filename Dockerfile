@@ -26,6 +26,8 @@ RUN    apk update \
 RUN    ls -l /root/scripts/ \
     && ls -l /root/scripts/scripts \
     && echo "*****************************************" \
+    && find find . -name createPackage.sh \
+    && echo "*****************************************" \
     && mkdir ~/sfdx \
     && mkdir ~/secrets \
     && ls -l root/ \
