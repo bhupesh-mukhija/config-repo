@@ -9,4 +9,5 @@ runs:
   using: 'docker'
   image: '../docker/Dockerfile'
   args:
-    - ${{ inputs.dev-hub }}
+    - ${{ secrets.DEV_HUB_CONFIG }}
+    #- ${{ inputs.dev-hub }}
