@@ -21,11 +21,13 @@ function packageCreate() {
     DEFINITIONFILE="/github/workspace/config/scratch-org-config/project-scratch-def.json"
     SFDX_JSON=$(cat /github/workspace/sfdx-project.json)
     P_NAME=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].package")
+    echo "Package name found : $P_NAME"
     if [ -n "$P_NAME" ]
     then
         P_VERSION_SFDX_JSON=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.package == \"$P_NAME\")) | .[0].versionNumber" | cut -d "." -f1,2,3)
+        echo "Query package details.."
         QUERY_RESPONSE=$(queryPackageByName $P_NAME)
-        handleSfdxResponse $QUERY_RESPONSE "Package Creation Notifications" "Create package version $P_NAME - $P_VERSION_SFDX_JSON"
+        handleSfdxResponse "$QUERY_RESPONSE" "Package Creation Notifications" "Create package version $P_NAME - $P_VERSION_SFDX_JSON"
         if [ "$(echo $QUERY_RESPONSE | jq ".result.totalSize")" = "0" ]
         then
             # TODO: REVISIT AS PACKAGE NAME WILL NOT BE AVAILABLE iN SFDX PROJECT JSON

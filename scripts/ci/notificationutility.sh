@@ -104,7 +104,7 @@ function prepareNotificationJson() {
             \"name\": \"Open Log\",
             \"targets\": [{
                 \"os\": \"default\",
-                \"uri\": \"https://docs.microsoft.com/outlook/actionable-messages\"
+                \"uri\": \"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"
             }]
         }]
     }"
