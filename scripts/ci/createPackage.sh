@@ -1,36 +1,44 @@
 #!/bin/bash
 source "/github/workspace/config/scripts/bash/utility.sh"
+source "/github/workspace/config/scripts/ci/notificationutility.sh"
 
-packageCreate() {
+function handleSfdxResponse() {
+    local RESPONSE=$1
+    if [ "$(echo $RESPONSE | jq -r ".status")" = "1" ]
+    then
+        echo "******* SFDX Command Failed *******"
+        echo $QUERY_RESPONSE | jq
+        STACK=$(echo $RESPONSE | jq -r ".name,.message,.stack")
+        sendNotification --statuscode $(echo $RESPONSE | jq -r ".status") \
+            --message "$(echo $RESPONSE | jq -r ".name"): $(echo $RESPONSE | jq -r ".message")" \
+            --details "$(echo $RESPONSE | jq -r ".stack")" --title "$2" --subtitle "$3"
+            #--title  --subtitle 
+    fi
+}
+
+function packageCreate() {
     # get sfdx json file
     DEFINITIONFILE="/github/workspace/config/scratch-org-config/project-scratch-def.json"
     SFDX_JSON=$(cat /github/workspace/sfdx-project.json)
     P_NAME=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].package")
-    PACKAGE_INFO=$(queryPackageByName $P_NAME)
-    echo $PACKAGE_INFO
-    #QUERY_STATUS=$(echo $PACKAGE_INFO | jq -r ".status")
-    if [ "$(echo $PACKAGE_INFO | jq -r ".status")" = "1" ]
+    if [ -n "$P_NAME" ]
     then
-        echo "Query Error FAIL THE JOB"
-        echo $PACKAGE_INFO | jq -r ".name,.message,.stack"
-        exit 1
-        # TODO: ERROR HANDLING - send emails or post to teams channel
-    else
-        echo "PACKAGE QUERY SUCCESSFUL"
-        if [ "$(echo $PACKAGE_INFO | jq ".result.totalSize")" = "0" ]
+        P_VERSION_SFDX_JSON=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.package == \"$P_NAME\")) | .[0].versionNumber" | cut -d "." -f1,2,3)
+        QUERY_RESPONSE=$(queryPackageByName $P_NAME)
+        handleSfdxResponse $QUERY_RESPONSE "Package Creation Notifications" "Create package version $P_NAME - $P_VERSION_SFDX_JSON"
+        if [ "$(echo $QUERY_RESPONSE | jq ".result.totalSize")" = "0" ]
         then
             # TODO: REVISIT AS PACKAGE NAME WILL NOT BE AVAILABLE iN SFDX PROJECT JSON
             echo "$P_NAME not found, create a package and then version"
             # TODO: CREATE PACKAGE BEFORE CREATING VERSION
         else
             echo "$P_NAME found, continue to create package version"
-            P_VERSION_DEVHUB=$(echo $PACKAGE_INFO | jq -r '"\(.result.records[0].MajorVersion)"+"."+"\(.result.records[0].MinorVersion)"+"."+"\(.result.records[0].PatchVersion)"')
-            P_VERSION_SFDX_JSON=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.package == \"$P_NAME\")) | .[0].versionNumber" | cut -d "." -f1,2,3)
-            #if [ $P_VERSION_DEVHUB = $P_VERSION_SFDX_JSON ] && [ $(jq -r ".result.records[0].IsReleased" <<< $PACKAGE_INFO) = "true" ];
+            P_VERSION_DEVHUB=$(echo $QUERY_RESPONSE | jq -r '"\(.result.records[0].MajorVersion)"+"."+"\(.result.records[0].MinorVersion)"+"."+"\(.result.records[0].PatchVersion)"')
+            #if [ $P_VERSION_DEVHUB = $P_VERSION_SFDX_JSON ] && [ $(jq -r ".result.records[0].IsReleased" <<< $QUERY_RESPONSE) = "true" ];
             if [ "$P_VERSION_DEVHUB" = "$P_VERSION_SFDX_JSON" ]
             then
                 echo "Latest devhub package version is same as requested (sfdx-project.json)"
-                if [ "$(echo $PACKAGE_INFO | jq -r ".result.records[0].IsReleased")" = "true" ]
+                if [ "$(echo $QUERY_RESPONSE | jq -r ".result.records[0].IsReleased")" = "true" ]
                 then
                     # TODO: GENERATE ERROR AND PUBLISH TO TEAMS CHANNEL
                     echo "Requested version is already released, please update sfdx project json and rerun the job"
@@ -56,5 +64,7 @@ packageCreate() {
                 fi
             fi
         fi
+    else
+        echo "Package Name not found in sfdx-json"
     fi
 }
