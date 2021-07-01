@@ -12,7 +12,6 @@ function handleSfdxResponse() {
         sendNotification --statuscode $(echo $RESPONSE | jq -r ".status") \
             --message "$(echo $RESPONSE | jq -r ".name"): $(echo $RESPONSE | jq -r ".message")" \
             --details "$(echo $RESPONSE | jq -r ".stack")" --title "$2" --subtitle "$3"
-            #--title  --subtitle 
     fi
 }
 
@@ -44,7 +43,9 @@ function packageCreate() {
                 if [ "$(echo $QUERY_RESPONSE | jq -r ".result.records[0].IsReleased")" = "true" ]
                 then
                     # TODO: GENERATE ERROR AND PUBLISH TO TEAMS CHANNEL
-                    echo "Requested version is already released, please update sfdx project json and rerun the job"
+                    echo "Requested version $P_VERSION_SFDX_JSON is already released, please update sfdx project json and rerun the job"
+                    sendNotification --statuscode "1" --message "Requested version is already released" \
+                        --details "Requested version $P_VERSION_SFDX_JSON is already released, please increase either major, minor or patch version."
                 else
                     echo "Creating next beta version ($P_VERSION_SFDX_JSON) for package $P_NAME ..."
                     createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
@@ -60,12 +61,9 @@ function packageCreate() {
                     createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
                         --package $P_NAME --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME --wait 30 --definitionfile $DEFINITIONFILE
                 else
-                    # TODO: GENERATE ERROR AND PUBLISH TO TEAMS CHANNEL
                     echo "Cannot downgrade a package version from $P_VERSION_DEVHUB to $P_VERSION_SFDX_JSON."
-                    sendNotification --statuscode "1" \ 
-                        --message "Cannot downgrade a package version" \
+                    sendNotification --statuscode "1" --message "Cannot downgrade a package version" \
                         --details "Version downgrade not possible, please increase either major, minor or patch version. Latest DevHub version is : $P_VERSION_DEVHUB, sfdx project json/requested version: $P_VERSION_SFDX_JSON."
-                    exit 1
                 fi
             fi
         fi

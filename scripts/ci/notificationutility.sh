@@ -61,6 +61,8 @@ function sendNotification() {
         STATUS="SUCCESS"
     else # failure notification
         STATUS="FAILURE"
+        echo "******************************* $MESSAGE"
+        echo "******************************* $DETAILS"
         prepareNotificationJson
         echo "Sending teams notification."
         sendTeamsNotification
