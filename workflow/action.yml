@@ -2,7 +2,10 @@
 name: 'Create Package Version'
 description: 'Create package version for current repo'
 inputs:
-  dev-hub:  # id of input
+  dev-hub:  # devhub url
+    description: 'Dev hub secret for authrization in container'
+    required: true
+  operation: # operation
     description: 'Dev hub secret for authrization in container'
     required: true
 runs:
@@ -10,3 +13,4 @@ runs:
   image: '../docker/Dockerfile'
   args:
     - ${{ inputs.dev-hub }}
+    - ${{ inputs.operation }}

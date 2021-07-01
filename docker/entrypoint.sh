@@ -8,6 +8,7 @@ PATH=/root/sfdx/bin:$PATH
 sfdx --version
 sfdx plugins --core
 
+echo "Opertion parameter : $2"
 TARGETDEVHUBUSERNAME="devhubuser"
 authorizeOrg $1 $TARGETDEVHUBUSERNAME
 packageCreate
