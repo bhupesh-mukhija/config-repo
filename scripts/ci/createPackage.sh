@@ -11,7 +11,7 @@ function handleSfdxResponse() {
         STACK=$(echo $RESPONSE | jq -r ".name,.message,.stack")
         sendNotification --statuscode $(echo $RESPONSE | jq -r ".status") \
             --message "$(echo $RESPONSE | jq -r ".name"): $(echo $RESPONSE | jq -r ".message")" \
-            --details "$(echo $RESPONSE | jq -r ".stack")" --title "$2" --subtitle "$3"
+            --details "$(echo $RESPONSE | jq -r ".stack")"
     fi
 }
 
@@ -41,15 +41,18 @@ function packageCreate() {
             then
                 echo "Latest devhub package version is same as requested (sfdx-project.json)"
                 if [ "$(echo $QUERY_RESPONSE | jq -r ".result.records[0].IsReleased")" = "true" ]
-                then
-                    # TODO: GENERATE ERROR AND PUBLISH TO TEAMS CHANNEL
+                then # if requested package version released, fail the job and send notification
                     echo "Requested version $P_VERSION_SFDX_JSON is already released, please update sfdx project json and rerun the job"
                     sendNotification --statuscode "1" --message "Requested version is already released" \
                         --details "Requested version $P_VERSION_SFDX_JSON is already released, please increase either major, minor or patch version."
-                else
+                else # create package version
                     echo "Creating next beta version ($P_VERSION_SFDX_JSON) for package $P_NAME ..."
-                    createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
-                        --package $P_NAME --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME --wait 30 --definitionfile $DEFINITIONFILE    
+                    VERSION_RESPONSE=$(createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
+                        --package $P_NAME --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME --wait 30 --definitionfile $DEFINITIONFILE)
+                    handleSfdxResponse "$VERSION_RESPONSE"
+                    sendNotification --statuscode "0" \
+                        --message "Package creation successful" \
+                        --details "New beta version of $P_VERSION_SFDX_JSON for $P_NAME created successfully"
                 fi
             else
                 echo "Requested package version (sfdx-project.json) and latest devhub version are not same"
