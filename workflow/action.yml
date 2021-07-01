@@ -12,5 +12,4 @@ runs:
   using: 'docker'
   image: '../docker/Dockerfile'
   args:
-    - ${{ inputs.dev-hub }}
     - ${{ inputs.operation }}

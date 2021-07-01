@@ -98,7 +98,7 @@ function queryPackageByName() {
 }
 
 function authorizeOrg() {
-    echo $(sfdx auth:sfdxurl:store --sfdxurlfile=$1 --setalias=$2)
+    echo $(sfdx auth:sfdxurl:store --sfdxurlfile=$1 --setalias=$2 --json)
 }
 
 function createVersion() {
