@@ -26,8 +26,9 @@ function packageCreate() {
     then
         P_VERSION_SFDX_JSON=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.package == \"$P_NAME\")) | .[0].versionNumber" | cut -d "." -f1,2,3)
         echo "Query package details.."
+        SUBTITLE="Create package version $P_NAME - $P_VERSION_SFDX_JSON"
         QUERY_RESPONSE=$(queryPackageByName $P_NAME)
-        handleSfdxResponse "$QUERY_RESPONSE" "Package Creation Notifications" "Create package version $P_NAME - $P_VERSION_SFDX_JSON"
+        handleSfdxResponse "$QUERY_RESPONSE"
         if [ "$(echo $QUERY_RESPONSE | jq ".result.totalSize")" = "0" ]
         then
             # TODO: REVISIT AS PACKAGE NAME WILL NOT BE AVAILABLE iN SFDX PROJECT JSON
@@ -52,7 +53,6 @@ function packageCreate() {
             else
                 echo "Requested package version (sfdx-project.json) and latest devhub version are not same"
                 # check if the package version requested is downgrading
-                echo $(isUpgrade ${P_VERSION_DEVHUB//"."/} ${P_VERSION_SFDX_JSON//"."/})
                 if [ "$(isUpgrade ${P_VERSION_DEVHUB//"."/ } ${P_VERSION_SFDX_JSON//"."/ })" = "1" ]
                 then
                     # create package version as it is upgrading
@@ -62,6 +62,9 @@ function packageCreate() {
                 else
                     # TODO: GENERATE ERROR AND PUBLISH TO TEAMS CHANNEL
                     echo "Cannot downgrade a package version from $P_VERSION_DEVHUB to $P_VERSION_SFDX_JSON."
+                    sendNotification --statuscode "1" \ 
+                        --message "Cannot downgrade a package version" \
+                        --details "Version downgrade not possible, please increase either major, minor or patch version. Latest DevHub version is : $P_VERSION_DEVHUB, sfdx project json/requested version: $P_VERSION_SFDX_JSON."
                     exit 1
                 fi
             fi
