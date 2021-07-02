@@ -2,6 +2,7 @@
 source "/github/workspace/config/scripts/bash/utility.sh"
 source "/github/workspace/config/scripts/ci/notificationutil.sh"
 source "/github/workspace/config/scripts/ci/globalutil.sh"
+source "/github/workspace/config/scripts/ci/packageutil.sh"
 
 function packageCreate() {
     # get sfdx json file
