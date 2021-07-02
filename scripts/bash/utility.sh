@@ -89,47 +89,6 @@ function readParams {
     done
 }
 
-function queryPackageByName() {
-    local PACKAGE_QUERY_FIELDS=" Id, Name, Package2Id, Tag, Package2.Name, SubscriberPackageVersion.Dependencies, IsReleased, MajorVersion, MinorVersion, PatchVersion, CreatedDate, LastModifiedDate, AncestorId, Ancestor.MajorVersion, Ancestor.MinorVersion, Ancestor.PatchVersion "
-    local QUERY_RESULT=$(sfdx force:data:soql:query -u $TARGETDEVHUBUSERNAME -t \
-        -q "SELECT $PACKAGE_QUERY_FIELDS FROM Package2Version WHERE Package2.Name = '$1' ORDER BY LastModifiedDate DESC, CreatedDate DESC LIMIT 1" \
-        --json)
-    echo $QUERY_RESULT
-}
-
 function authorizeOrg() {
     echo $(sfdx auth:sfdxurl:store --sfdxurlfile=$1 --setalias=$2 --json)
-}
-
-function createVersion() {
-    readParams "$@"
-    echo $(sfdx force:package:version:create --path=$SOURCEPATH --package=$PACKAGENAME \
-        --tag=$COMMITTAG --targetdevhubusername=$TARGETDEVHUBUSERNAME --wait=$WAIT \
-        --definitionfile=$DEFINITIONFILE --codecoverage --installationkeybypass --json)
-}
-
-function createPackage() {
-    readParams "$@"
-
-    RESPONS=$(sfdx force:package:create --path=$SOURCEPATH --name=$PACKAGENAME \
-        --description=$DESCRIPTION --packagetype=$PACKAGETYPE --targetdevhubusername=$TARGETDEVHUBUSERNAME --json)
-    echo $RESPONSE
-    #TODO: ON SUCCESS COMMIT SFDX JSON AND CREATE VERSION
-}
-
-function isUpgrade() {
-    local IS_REQUEST_UPGRADE=1
-    DH_VERSION=$1
-    SFDXJ_VERSION=$2
-    iterator=0
-    for eachVersion in "${DH_VERSION[@]}";
-    do
-        if [ "$eachVersion" -lt "${SFDXJ_VERSION[iterator]}" ]
-        then
-            IS_REQUEST_UPGRADE=0
-            break;
-        fi
-        iterator=$((iterator+1))
-    done
-    echo $IS_REQUEST_UPGRADE
 }

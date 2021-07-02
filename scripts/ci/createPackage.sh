@@ -1,19 +1,7 @@
 #!/bin/bash
 source "/github/workspace/config/scripts/bash/utility.sh"
-source "/github/workspace/config/scripts/ci/notificationutility.sh"
-
-function handleSfdxResponse() {
-    local RESPONSE=$1
-    if [ "$(echo $RESPONSE | jq -r ".status")" = "1" ]
-    then
-        echo "******* SFDX Command Failed *******"
-        echo $QUERY_RESPONSE | jq
-        STACK=$(echo $RESPONSE | jq -r ".name,.message,.stack")
-        sendNotification --statuscode $(echo $RESPONSE | jq -r ".status") \
-            --message "$(echo $RESPONSE | jq -r ".name"): $(echo $RESPONSE | jq -r ".message")" \
-            --details "$(echo $RESPONSE | jq -r ".stack")"
-    fi
-}
+source "/github/workspace/config/scripts/ci/notificationutil.sh"
+source "/github/workspace/config/scripts/ci/globalutil.sh"
 
 function packageCreate() {
     # get sfdx json file
@@ -47,12 +35,9 @@ function packageCreate() {
                         --details "Requested version $P_VERSION_SFDX_JSON is already released, please increase either major, minor or patch version."
                 else # create package version
                     echo "Creating next beta version ($P_VERSION_SFDX_JSON) for package $P_NAME ..."
-                    VERSION_RESPONSE=$(createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
-                        --package $P_NAME --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME --wait 30 --definitionfile $DEFINITIONFILE)
-                    handleSfdxResponse "$VERSION_RESPONSE"
-                    sendNotification --statuscode "0" \
-                        --message "Package creation successful" \
-                        --details "New beta version of $P_VERSION_SFDX_JSON for $P_NAME created successfully"
+                    createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
+                        --package $P_NAME --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME \
+                        --wait 30 --definitionfile $DEFINITIONFILE --versionnumber $P_VERSION_SFDX_JSON
                 fi
             else
                 echo "Requested package version (sfdx-project.json) and latest devhub version are not same"

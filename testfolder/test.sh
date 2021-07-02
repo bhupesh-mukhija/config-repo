@@ -1,6 +1,6 @@
 #!/bin/sh
 source "../scripts/bash/utility.sh"
-source "../scripts/ci/notificationutility.sh"
+source "../scripts/ci/notificationutil.sh"
 
 queryPackageByName1() {
     local PACKAGE_QUERY_FIELDS=" Id, Name, Package2Id, Tag Package2.Name, SubscriberPackageVersion.Dependencies, IsReleased, MajorVersion, MinorVersion, PatchVersion, CreatedDate, LastModifiedDate, AncestorId, Ancestor.MajorVersion, Ancestor.MinorVersion, Ancestor.PatchVersion "
@@ -83,5 +83,10 @@ function createPackageVersion() {
         echo "Package Name not found in sfdx-json"
     fi
 }
-createPackageVersion
+#createPackageVersion
 #testspilt
+while true
+do
+    echo "here"
+    break
+done
