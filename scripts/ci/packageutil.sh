@@ -88,7 +88,6 @@ function createVersion() {
     echo "Initiating package creation.."
     echo $CMD_CREATE
     local RESP_CREATE=$(echo $($CMD_CREATE)) # create package and collect response
-    echo $RESP_CREATE | jq
     handleSfdxResponse $RESP_CREATE
     local JOBID=$(echo $RESP_CREATE | jq -r ".result.Id")
     echo "Initilised with job id: $JOBID"
@@ -97,7 +96,6 @@ function createVersion() {
     while true
     do
         RESP_REPORT=$(echo $($CMD_REPORT))
-        echo $RESP_REPORT | jq
         if [ "$(echo $RESP_REPORT | jq -r ".status")" = "1" ]
         then
             handleSfdxResponse $RESP_REPORT
@@ -106,9 +104,10 @@ function createVersion() {
             local REQ_STATUS=$(echo $RESP_REPORT | jq -r ".result[0].Status")
             if [ $REQ_STATUS = "Success" ]
             then
+                RESULT=$(echo $RESPONSE_REPORT | jq -r ".result")
                 sendNotification --statuscode "0" \
                     --message "Package creation successful" \
-                    --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details. \n\r $(echo $RESPONSE_REPORT | jq -r ".result")"
+                    --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details.\n\r $RESULT"
                 break
             else
                 sleep 5
