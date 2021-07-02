@@ -81,40 +81,41 @@ function queryPackageByName() {
 }
 
 function createVersion() {
-    readParams "$@"
-    local CMD_CREATE="sfdx force:package:version:create --path=$SOURCEPATH --package=$PACKAGENAME \
-        --tag=$COMMITTAG --targetdevhubusername=$TARGETDEVHUBUSERNAME --wait=$WAIT \
+    readPackageParams "$@"
+    local CMD_CREATE="sfdx force:package:version:create --path=$SOURCEPATH --package=$PACKAGE \
+        --tag=$COMMITTAG --targetdevhubusername=$TARGETDEVHUBUSERNAME \
         --definitionfile=$DEFINITIONFILE --codecoverage --installationkeybypass --json"
     echo "Initiating package creation.."
     echo $CMD_CREATE
-    local RESPONSE_CREATE=$(echo $($CMD_CREATE))
-    echo $RESPONSE_CREATE
-    handleSfdxResponse $RESPONSE_CREATE
-    local JOBID=$(echo $RESPONSE_CREATE | jq -r ".result[0].Id")
+    local RESP_CREATE=$(echo $($CMD_CREATE)) # create package and collect response
+    echo $RESP_CREATE | jq
+    handleSfdxResponse $RESP_CREATE
+    local JOBID=$(echo $RESP_CREATE | jq -r ".result.Id")
     echo "Initilised with job id: $JOBID"
-    echo $CMD_REPORT="sfdx force:package:version:create:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --packagecreaterequestid=$JOBID --json"
+    CMD_REPORT="sfdx force:package:version:create:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --packagecreaterequestid=$JOBID --json"
+    echo $CMD_REPORT
     while true
     do
-        RESPONSE_REPORT=$($CMD_REPORT)
-        if [ $(echo $RESPONSE_REPORT | jq -r ".status") = "1" ]
+        RESP_REPORT=$(echo $($CMD_REPORT))
+        echo $RESP_REPORT | jq
+        if [ "$(echo $RESP_REPORT | jq -r ".status")" = "1" ]
         then
-            handleSfdxResponse $RESPONSE_REPORT
+            handleSfdxResponse $RESP_REPORT
             break
         else
-            local REQ_STATUS=$(echo $RESPONSE_REPORT | jq -r ".result[0].Status")
+            local REQ_STATUS=$(echo $RESP_REPORT | jq -r ".result[0].Status")
             if [ $REQ_STATUS = "Success" ]
             then
                 sendNotification --statuscode "0" \
                     --message "Package creation successful" \
-                    --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details. \n\r $(echo $RESPONSE_REPORT | jq -r ".result[0].Status")"
+                    --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details. \n\r $(echo $RESPONSE_REPORT | jq -r ".result")"
                 break
             else
                 sleep 5
                 echo "Request status $REQ_STATUS"
-                RESPONSE_REPORT=$($CMD_REPORT)
+                RESP_REPORT=$($CMD_REPORT)
             fi
         fi
-        break;
     done
 }
 

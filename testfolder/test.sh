@@ -85,8 +85,41 @@ function createPackageVersion() {
 }
 #createPackageVersion
 #testspilt
+SOURCEPATH="sales"
+PACKAGE="salesforce-global-sales"
+DEFINITIONFILE="config/scratch-org-config/project-scratch-def.json"
+COMMITTAG="97262a8"
+local CMD_CREATE="sfdx force:package:version:create --path=$SOURCEPATH --package=$PACKAGE \
+    --tag=$COMMITTAG --targetdevhubusername=$TARGETDEVHUBUSERNAME \
+    --definitionfile=$DEFINITIONFILE --codecoverage --installationkeybypass --json"
+echo "Initiating package creation.."
+echo $CMD_CREATE
+local RESP_CREATE=$(echo $($CMD_CREATE)) # create package and collect response
+echo $RESP_CREATE
+handleSfdxResponse $RESP_CREATE
+local JOBID=$(echo $RESP_CREATE | jq -r ".result[0].Id")
+echo "Initilised with job id: $JOBID"
+echo $CMD_REPORT="sfdx force:package:version:create:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --packagecreaterequestid=$JOBID --json"
 while true
 do
-    echo "here"
-    break
+    RESP_REPORT=$($CMD_REPORT)
+    if [ $(echo $RESP_REPORT | jq -r ".status") = "1" ]
+    then
+        handleSfdxResponse $RESP_REPORT
+        break
+    else
+        local REQ_STATUS=$(echo $RESP_REPORT | jq -r ".result[0].Status")
+        if [ $REQ_STATUS = "Success" ]
+        then
+            sendNotification --statuscode "0" \
+                --message "Package creation successful" \
+                --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details. \n\r $(echo $RESPONSE_REPORT | jq -r ".result[0]")"
+            break
+        else
+            sleep 5
+            echo "Request status $REQ_STATUS"
+            RESP_REPORT=$($CMD_REPORT)
+        fi
+    fi
+    break;
 done
