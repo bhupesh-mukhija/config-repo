@@ -88,6 +88,7 @@ function createVersion() {
     echo "Initiating package creation.."
     echo $CMD_CREATE
     local RESPONSE_CREATE=$(echo $($CMD_CREATE))
+    echo $RESPONSE_CREATE
     handleSfdxResponse $RESPONSE_CREATE
     local JOBID=$(echo $RESPONSE_CREATE | jq -r ".result[0].Id")
     echo "Initilised with job id: $JOBID"
