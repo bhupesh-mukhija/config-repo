@@ -1,6 +1,5 @@
 function handleSfdxResponse() {
     local RESPONSE=$1
-    echo "$(echo $RESPONSE | jq -r ".status")"
     if [ "$(echo $RESPONSE | jq -r ".status")" = "1" ]
     then
         echo "******* SFDX Command Failed *******"

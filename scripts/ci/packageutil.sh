@@ -107,22 +107,24 @@ function createVersion() {
                 echo "Created subscriber version id $P_SUB_VERSIONID"
                 local VERSION_REPORT=$(echo $(sfdx force:package:version:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --package=$P_SUB_VERSIONID --json --verbose))
                 handleSfdxResponse "$VERSION_REPORT"
+                echo $VERSION_REPORT | jq
+
                 sendNotification --statuscode "0" \
                     --message "Package creation successful" \
                     --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details.
-                        <BR/><b>Package Id</b> - $(echo $VERSION_REPORT | jq -r ".Package2Id")
-                        <BR/><b>Subscriber Package VersionId</b> - $(echo $RESP_REPORT | jq -r ".SubscriberPackageVersionId")
-                        <BR/><b>Package Version</b> - $(echo $RESP_REPORT | jq -r ".Version")
-                        <BR/><b>Ancestor Version Id</b> - $(echo $RESP_REPORT | jq -r ".AncestorId")
-                        <BR/><b>Ancestor Version</b> - $(echo $RESP_REPORT | jq -r ".AncestorVersion")
-                        <BR/><b>Package Release Version</b> - $(echo $RESP_REPORT | jq -r ".ReleaseVersion")
+                        <BR/><b>Package Id</b> - $(echo $VERSION_REPORT | jq -r ".result.Package2Id")
+                        <BR/><b>Subscriber Package VersionId</b> - $(echo $RESP_REPORT | jq -r ".result.SubscriberPackageVersionId")
+                        <BR/><b>Package Version</b> - $(echo $RESP_REPORT | jq -r ".result.Version")
+                        <BR/><b>Ancestor Version Id</b> - $(echo $RESP_REPORT | jq -r ".result.AncestorId")
+                        <BR/><b>Ancestor Version</b> - $(echo $RESP_REPORT | jq -r ".result.AncestorVersion")
+                        <BR/><b>Package Release Version</b> - $(echo $RESP_REPORT | jq -r ".result.ReleaseVersion")
                         <BR/><b>CommitId</b> - $(echo $RESP_REPORT | jq -r ".Tag")
-                        <BR/><b>Code Coverage</b> - $(echo $RESP_REPORT | jq -r ".CodeCoverage.apexCodeCoveragePercentage")
-                        <BR/><b>Code Coverage check passed</b> - $(echo $RESP_REPORT | jq -r ".HasPassedCodeCoverageCheck")
-                        <BR/><b>Is Validation Skipped?</b> - $(echo $RESP_REPORT | jq -r ".ValidationSkipped")"
+                        <BR/><b>Code Coverage</b> - $(echo $RESP_REPORT | jq -r ".result.CodeCoverage.apexCodeCoveragePercentage")
+                        <BR/><b>Code Coverage check passed</b> - $(echo $RESP_REPORT | jq -r ".result.HasPassedCodeCoverageCheck")
+                        <BR/><b>Is Validation Skipped?</b> - $(echo $RESP_REPORT | jq -r ".result.ValidationSkipped")"
                 break
             else
-                sleep 2
+                sleep 5
                 echo "Request status $REQ_STATUS"
                 RESP_REPORT=$($CMD_REPORT)
             fi
