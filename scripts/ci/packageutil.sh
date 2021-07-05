@@ -105,8 +105,10 @@ function createVersion() {
             if [ $REQ_STATUS = "Success" ]
             then
                 local P_SUB_VERSIONID=$(echo $RESP_REPORT | jq -r ".result[0].SubscriberPackageVersionId")
+                echo "$P_SUB_VERSIONID"
                 #local CMD_VERSION_RPT="sfdx force:package:version:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --package=$P_SUB_VERSIONID --json --verbose"
                 local VERSION_REPORT=$(echo $(sfdx force:package:version:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --package=$P_SUB_VERSIONID --json --verbose))
+                echo "$VERSION_REPORT"
                 #sendNotification --statuscode "0" \
                 #    --message "Package creation successful" \
                 #    --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details.
