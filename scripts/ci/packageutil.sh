@@ -104,13 +104,13 @@ function createVersion() {
             local REQ_STATUS=$(echo $RESP_REPORT | jq -r ".result[0].Status")
             if [ $REQ_STATUS = "Success" ]
             then
-                RESULT=$(echo $RESPONSE_REPORT | jq -r ".result")
+                RESULT=$(echo $RESPONSE_REPORT | jq -r ".result") 
                 sendNotification --statuscode "0" \
                     --message "Package creation successful" \
-                    --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details.\n\r $RESULT"
+                    --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details $RESULT"
                 break
             else
-                sleep 5
+                sleep 2
                 echo "Request status $REQ_STATUS"
                 RESP_REPORT=$($CMD_REPORT)
             fi

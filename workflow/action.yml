@@ -1,8 +1,8 @@
 # action.yml
-name: 'Create Package Version'
-description: 'Create package version for current repo'
+name: 'Perform Action'
+description: 'Create docker container and run requested operation'
 inputs:
-  dev-hub:  # devhub url
+  dev-hub:  # devhub
     description: 'Dev hub secret for authrization in container'
     required: true
   operation: # operation

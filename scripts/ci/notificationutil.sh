@@ -57,16 +57,15 @@ function sendNotification() {
     readNotificationParams "$@"
     if [ "$STATUSCODE" = "0" ] # success notification
     then
-        echo "Test"
         STATUS="SUCCESS"
         prepareNotificationJson
-        echo "Sending teams notification."
+        echo "Success! Sending teams notification."
         sendTeamsNotification
         exit 0
     else # failure notification
         STATUS="FAILURE"
         prepareNotificationJson
-        echo "Sending teams notification."
+        echo "Failed! Sending teams notification."
         sendTeamsNotification
         exit 1
     fi
