@@ -1,9 +1,6 @@
 function handleSfdxResponse() {
-    echo "handleSfdxResponse... "
     echo $1
     local RESPONSE=$1
-    echo $RESPONSE
-    echo "handleSfdxResponse... "
     echo "$(echo $RESPONSE | jq -r ".status")"
     if [ "$(echo $RESPONSE | jq -r ".status")" = "1" ]
     then
@@ -14,5 +11,4 @@ function handleSfdxResponse() {
             --message "$(echo $RESPONSE | jq -r ".name"): $(echo $RESPONSE | jq -r ".message")" \
             --details "$(echo $RESPONSE | jq -r ".stack")"
     fi
-    echo "handleSfdxResponse ended"
 }

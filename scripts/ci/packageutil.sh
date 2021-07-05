@@ -88,7 +88,7 @@ function createVersion() {
     echo "Initiating package creation.."
     echo $CMD_CREATE
     local RESP_CREATE=$(echo $($CMD_CREATE)) # create package and collect response
-    handleSfdxResponse $RESP_CREATE
+    handleSfdxResponse "$RESP_CREATE"
     local JOBID=$(echo $RESP_CREATE | jq -r ".result.Id")
     echo "Initilised with job id: $JOBID"
     #CMD_RPT="sfdx force:package:version:create:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --packagecreaterequestid=$JOBID --json"
@@ -98,17 +98,18 @@ function createVersion() {
         RESP_REPORT=$(echo $(sfdx force:package:version:create:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --packagecreaterequestid=$JOBID --json))
         if [ "$(echo $RESP_REPORT | jq -r ".status")" = "1" ]
         then
-            handleSfdxResponse $RESP_REPORT
+            handleSfdxResponse "$RESP_REPORT"
             break
         else
             local REQ_STATUS=$(echo $RESP_REPORT | jq -r ".result[0].Status")
             if [ $REQ_STATUS = "Success" ]
             then
+                echo "Package creation successful.."
                 local P_SUB_VERSIONID=$(echo $RESP_REPORT | jq -r ".result[0].SubscriberPackageVersionId")
-                echo "$P_SUB_VERSIONID"
+                echo "Created subscriber version id $P_SUB_VERSIONID"
                 #local CMD_VERSION_RPT="sfdx force:package:version:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --package=$P_SUB_VERSIONID --json --verbose"
                 local VERSION_REPORT=$(echo $(sfdx force:package:version:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --package=$P_SUB_VERSIONID --json --verbose))
-                echo "$VERSION_REPORT"
+                echo "$VERSION_REPORT" | jq
                 #sendNotification --statuscode "0" \
                 #    --message "Package creation successful" \
                 #    --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details.
@@ -116,7 +117,7 @@ function createVersion() {
                 #        <BR/><b>Package2VersionId</b> - $(echo $RESP_REPORT | jq -r ".result[0].Package2VersionId")
                 #        <BR/><b>SubscriberPackageVersionId</b> - $(echo $RESP_REPORT | jq -r ".result[0].SubscriberPackageVersionId")
                 #        <BR/><b>CommitId</b> - $(echo $RESP_REPORT | jq -r ".result[0].Tag")"
-                handleSfdxResponse $VERSION_REPORT
+                handleSfdxResponse "$VERSION_REPORT"
                 sendNotification --statuscode "0" \
                     --message "Package creation successful" \
                     --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details.
