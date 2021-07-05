@@ -91,11 +91,11 @@ function createVersion() {
     handleSfdxResponse $RESP_CREATE
     local JOBID=$(echo $RESP_CREATE | jq -r ".result.Id")
     echo "Initilised with job id: $JOBID"
-    CMD_REPORT="sfdx force:package:version:create:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --packagecreaterequestid=$JOBID --json"
-    echo $CMD_REPORT
+    #CMD_RPT="sfdx force:package:version:create:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --packagecreaterequestid=$JOBID --json"
+    #echo $CMD_REPORT
     while true
     do
-        RESP_REPORT=$(echo $($CMD_REPORT))
+        RESP_REPORT=$(echo $(sfdx force:package:version:create:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --packagecreaterequestid=$JOBID --json))
         if [ "$(echo $RESP_REPORT | jq -r ".status")" = "1" ]
         then
             handleSfdxResponse $RESP_REPORT
@@ -104,14 +104,16 @@ function createVersion() {
             local REQ_STATUS=$(echo $RESP_REPORT | jq -r ".result[0].Status")
             if [ $REQ_STATUS = "Success" ]
             then
-                local RESULT=$(echo $RESPONSE_REPORT | jq -r ".result")
+                local P_SUB_VERSIONID=$(echo $RESP_REPORT | jq -r ".result[0].SubscriberPackageVersionId")
+                #local CMD_VERSION_RPT="sfdx force:package:version:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --package=$P_SUB_VERSIONID --json --verbose"
+                local VERSION_REPORT=$(echo $(sfdx force:package:version:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --package=$P_SUB_VERSIONID --json --verbose))
                 sendNotification --statuscode "0" \
                     --message "Package creation successful" \
                     --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details.
-                        <BR/><b>PackageId</b> - $(echo $RESPONSE_REPORT | jq -r ".result[0].Package2Id")
-                        <BR/><b>Package2VersionId</b> - $(echo $RESPONSE_REPORT | jq -r ".result[0].Package2VersionId")
-                        <BR/><b>SubscriberPackageVersionId</b> - $(echo $RESPONSE_REPORT | jq -r ".result[0].SubscriberPackageVersionId")
-                        <BR/><b>CommitId</b> - $(echo $RESPONSE_REPORT | jq -r ".result[0].Tag")"
+                        <BR/><b>PackageId</b> - $(echo $RESP_REPORT | jq -r ".result[0].Package2Id")
+                        <BR/><b>Package2VersionId</b> - $(echo $RESP_REPORT | jq -r ".result[0].Package2VersionId")
+                        <BR/><b>SubscriberPackageVersionId</b> - $(echo $RESP_REPORT | jq -r ".result[0].SubscriberPackageVersionId")
+                        <BR/><b>CommitId</b> - $(echo $RESP_REPORT | jq -r ".result[0].Tag")"
                 break
             else
                 sleep 2
