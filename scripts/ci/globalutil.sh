@@ -1,5 +1,4 @@
 function handleSfdxResponse() {
-    echo $1
     local RESPONSE=$1
     echo "$(echo $RESPONSE | jq -r ".status")"
     if [ "$(echo $RESPONSE | jq -r ".status")" = "1" ]
