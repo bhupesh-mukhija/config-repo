@@ -3,10 +3,19 @@ source "../scripts/bash/utility.sh"
 source "../scripts/ci/notificationutil.sh"
 
 queryPackageByName1() {
-    local PACKAGE_QUERY_FIELDS=" Id, Name, Package2Id, Tag Package2.Name, SubscriberPackageVersion.Dependencies, IsReleased, MajorVersion, MinorVersion, PatchVersion, CreatedDate, LastModifiedDate, AncestorId, Ancestor.MajorVersion, Ancestor.MinorVersion, Ancestor.PatchVersion "
+    local PACKAGE_QUERY_FIELDS=" Id, Name, Package2Id, Tag, Package2.Name, SubscriberPackageVersion.Dependencies, IsReleased, MajorVersion, MinorVersion, PatchVersion, CreatedDate, LastModifiedDate, AncestorId, Ancestor.MajorVersion, Ancestor.MinorVersion, Ancestor.PatchVersion "
     echo $(sfdx force:data:soql:query -u $TARGETDEVHUBUSERNAME -t \
         -q "SELECT $PACKAGE_QUERY_FIELDS FROM Package2Version WHERE Package2.Name = '$1' ORDER BY LastModifiedDate DESC, CreatedDate DESC LIMIT 1" \
         --json)
+}
+
+function queryPackageBySubscriberVersionId() {
+    local PACKAGE_QUERY_FIELDS=" Id, Name, Package2Id, Tag, Package2.Name
+        , SubscriberPackageVersion.Dependencies, IsReleased, MajorVersion, MinorVersion
+        , PatchVersion, CreatedDate, LastModifiedDate, AncestorId, Ancestor.MajorVersion
+        , Ancestor.MinorVersion, Ancestor.PatchVersion "
+    echo $(sfdx force:data:soql:query -u $TARGETDEVHUBUSERNAME -t \
+        -q "SELECT $PACKAGE_QUERY_FIELDS FROM Package2Version WHERE SubscriberPackageVersionId IN ($1) ORDER BY LastModifiedDate DESC, CreatedDate DESC LIMIT 1" --json)
 }
 
 function createVersion() {
@@ -85,41 +94,113 @@ function createPackageVersion() {
 }
 #createPackageVersion
 #testspilt
-SOURCEPATH="sales"
-PACKAGE="salesforce-global-sales"
-DEFINITIONFILE="config/scratch-org-config/project-scratch-def.json"
-COMMITTAG="97262a8"
-local CMD_CREATE="sfdx force:package:version:create --path=$SOURCEPATH --package=$PACKAGE \
-    --tag=$COMMITTAG --targetdevhubusername=$TARGETDEVHUBUSERNAME \
-    --definitionfile=$DEFINITIONFILE --codecoverage --installationkeybypass --json"
-echo "Initiating package creation.."
-echo $CMD_CREATE
-local RESP_CREATE=$(echo $($CMD_CREATE)) # create package and collect response
-echo $RESP_CREATE
-handleSfdxResponse $RESP_CREATE
-local JOBID=$(echo $RESP_CREATE | jq -r ".result[0].Id")
-echo "Initilised with job id: $JOBID"
-echo $CMD_REPORT="sfdx force:package:version:create:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --packagecreaterequestid=$JOBID --json"
-while true
-do
-    RESP_REPORT=$($CMD_REPORT)
-    if [ $(echo $RESP_REPORT | jq -r ".status") = "1" ]
-    then
-        handleSfdxResponse $RESP_REPORT
-        break
-    else
-        local REQ_STATUS=$(echo $RESP_REPORT | jq -r ".result[0].Status")
-        if [ $REQ_STATUS = "Success" ]
+function start() {
+    SOURCEPATH="sales"
+    PACKAGE="salesforce-global-sales"
+    DEFINITIONFILE="config/scratch-org-config/project-scratch-def.json"
+    COMMITTAG="97262a8"
+    local CMD_CREATE="sfdx force:package:version:create --path=$SOURCEPATH --package=$PACKAGE \
+        --tag=$COMMITTAG --targetdevhubusername=$TARGETDEVHUBUSERNAME \
+        --definitionfile=$DEFINITIONFILE --codecoverage --installationkeybypass --json"
+    echo "Initiating package creation.."
+    echo $CMD_CREATE
+    local RESP_CREATE=$(echo $($CMD_CREATE)) # create package and collect response
+    echo $RESP_CREATE
+    handleSfdxResponse $RESP_CREATE
+    local JOBID=$(echo $RESP_CREATE | jq -r ".result[0].Id")
+    echo "Initilised with job id: $JOBID"
+    echo $CMD_REPORT="sfdx force:package:version:create:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --packagecreaterequestid=$JOBID --json"
+    while true
+    do
+        RESP_REPORT=$($CMD_REPORT)
+        if [ $(echo $RESP_REPORT | jq -r ".status") = "1" ]
         then
-            sendNotification --statuscode "0" \
-                --message "Package creation successful" \
-                --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details. \n\r $(echo $RESPONSE_REPORT | jq -r ".result[0]")"
+            handleSfdxResponse $RESP_REPORT
             break
         else
-            sleep 5
-            echo "Request status $REQ_STATUS"
-            RESP_REPORT=$($CMD_REPORT)
+            local REQ_STATUS=$(echo $RESP_REPORT | jq -r ".result[0].Status")
+            if [ $REQ_STATUS = "Success" ]
+            then
+                sendNotification --statuscode "0" \
+                    --message "Package creation successful" \
+                    --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details. \n\r $(echo $RESPONSE_REPORT | jq -r ".result[0]")"
+                break
+            else
+                sleep 5
+                echo "Request status $REQ_STATUS"
+                RESP_REPORT=$($CMD_REPORT)
+            fi
+        fi
+        break;
+    done
+}
+
+
+function getDependenciesFromDevHub() {
+    P_NAME="salesforce-global-sales"
+    TARGETDEVHUBUSERNAME="sagedevorg"
+    QUERY_RESPONSE=$(queryPackageByName1 $P_NAME)
+    #echo $QUERY_RESPONSE | jq
+    PACKAGE_Id=$(echo $QUERY_RESPONSE | jq -r ".result.records | map(select(.Package2.Name == \"$P_NAME\"))  | .[0].Package2Id")
+    # get dependencies from package details
+    DEPENDENCIES=$(echo $QUERY_RESPONSE \
+        | jq -r ".result.records \
+        | map(select(.Package2.Name == \"$P_NAME\")) \
+        | .[0].SubscriberPackageVersion.Dependencies")
+
+    # get query filter
+    iterator=0
+    for eachDepId in $(echo $DEPENDENCIES | jq -r '.ids | keys[] as $k | "\(.[$k].subscriberPackageVersionId)"')
+    do
+        if [ "$iterator" = "0" ]
+        then
+            QUERY_FILTER+="'$eachDepId'"
+        else
+            QUERY_FILTER+=",'$eachDepId'"
+        fi
+        iterator+=1
+    done
+    echo "$QUERY_FILTER"
+    queryPackageBySubscriberVersionId $QUERY_FILTER | jq
+    #D=$(echo $DEPENDENCIES | jq -r '.ids | map(.subscriberPackageVersionId) | join(",")')
+    #echo $D
+    #RES=$(queryPackageBySubscriberVersionId $D)
+    #echo $RES | jq
+
+    # get values from array
+    #DEPENDENCY_ARRAY=$(echo $DEPENDENCIES | jq -r '.ids | keys[] as $k | "\(.[$k].subscriberPackageVersionId)"')
+    #echo $(printf '%s,' "${DEPENDENCY_ARRAY[@]}")
+}
+
+function dependenciesTest() {
+    ERR_DEPENDENCY_VALIDATION="true"
+    SFDX_JSON=$(<../../sfdx-project.json)
+    P_NAME="salesforce-global-sales"
+    TARGETDEVHUBUSERNAME="sagedevorg"
+    VERSIONS_PACKAGE=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.package == \"$P_NAME\")) | .[0].dependencies")
+    ARRAY=($(echo $VERSIONS_PACKAGE | jq -r '.[] | keys[] as $k | "\(.[$k])"'))
+    VERSION_MISMATCH=0
+    for ((iterator=0; iterator<${#ARRAY[@]}; iterator++))
+    do
+        local CURRENT_PACKAGE=${ARRAY[iterator]}
+        # query in loop due to restrictions on the object
+        local DEV_HUB_VERSION=$(queryPackageByName1 $CURRENT_PACKAGE | jq -r '"\(.result.records[0].MajorVersion)"+"."+"\(.result.records[0].MinorVersion)"+"."+"\(.result.records[0].PatchVersion)"')
+        iterator=$((iterator+1)) # access version
+        local SFDX_JSON_VERSION=$(echo ${ARRAY[iterator]} | cut -d "." -f1,2,3)
+        if [ "$DEV_HUB_VERSION" != "$SFDX_JSON_VERSION" ]
+        then
+            VERSION_MISMATCH=1
+            echo "Dependencies version in sfdx project json ($SFDX_JSON_VERSION) do not match with latest Devhub version ($DEV_HUB_VERSION) for package $CURRENT_PACKAGE"
+        fi
+    done
+    if [ "$VERSION_MISMATCH" = "1" ] 
+    then
+        if [ "$ERR_DEPENDENCY_VALIDATION" = "true" ]
+        then
+            echo "ERROR!"
+        else
+            echo "WARNING!"
         fi
     fi
-    break;
-done
+}
+dependenciesTest

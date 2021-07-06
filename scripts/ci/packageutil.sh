@@ -83,8 +83,14 @@ function queryPackageByName() {
 function createVersion() {
     readPackageParams "$@"
     local CMD_CREATE="sfdx force:package:version:create --path=$SOURCEPATH --package=$PACKAGE \
-        --tag=$COMMITTAG --targetdevhubusername=$TARGETDEVHUBUSERNAME \
-        --definitionfile=$DEFINITIONFILE --codecoverage --installationkeybypass --json"
+        --tag=$COMMITTAG --targetdevhubusername=$TARGETDEVHUBUSERNAME --definitionfile=$DEFINITIONFILE "
+    if [ "$USE_SFDX_BRANCH" = "true" ]
+    then
+        CMD_CREATE+="--branch=$CURRENT_BRANCH "
+    else
+        CMD_CREATE+="--versiondescription=$CURRENT_BRANCH "
+    fi
+    CMD_CREATE+="--codecoverage --installationkeybypass --json"
     echo "Initiating package creation.."
     echo $CMD_CREATE
     local RESP_CREATE=$(echo $($CMD_CREATE)) # create package and collect response
@@ -113,15 +119,15 @@ function createVersion() {
                     --message "Package creation successful" \
                     --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details.
                         <BR/><b>Package Id</b> - $(echo $VERSION_REPORT | jq -r ".result.Package2Id")
-                        <BR/><b>Subscriber Package VersionId</b> - $(echo $RESP_REPORT | jq -r ".result.SubscriberPackageVersionId")
-                        <BR/><b>Package Version</b> - $(echo $RESP_REPORT | jq -r ".result.Version")
-                        <BR/><b>Ancestor Version Id</b> - $(echo $RESP_REPORT | jq -r ".result.AncestorId")
-                        <BR/><b>Ancestor Version</b> - $(echo $RESP_REPORT | jq -r ".result.AncestorVersion")
-                        <BR/><b>Package Release Version</b> - $(echo $RESP_REPORT | jq -r ".result.ReleaseVersion")
-                        <BR/><b>CommitId</b> - $(echo $RESP_REPORT | jq -r ".Tag")
-                        <BR/><b>Code Coverage</b> - $(echo $RESP_REPORT | jq -r ".result.CodeCoverage.apexCodeCoveragePercentage")
-                        <BR/><b>Code Coverage check passed</b> - $(echo $RESP_REPORT | jq -r ".result.HasPassedCodeCoverageCheck")
-                        <BR/><b>Is Validation Skipped?</b> - $(echo $RESP_REPORT | jq -r ".result.ValidationSkipped")"
+                        <BR/><b>Subscriber Package VersionId</b> - $(echo $VERSION_REPORT | jq -r ".result.SubscriberPackageVersionId")
+                        <BR/><b>Package Version</b> - $(echo $VERSION_REPORT | jq -r ".result.Version")
+                        <BR/><b>Ancestor Version Id</b> - $(echo $VERSION_REPORT | jq -r ".result.AncestorId")
+                        <BR/><b>Ancestor Version</b> - $(echo $VERSION_REPORT | jq -r ".result.AncestorVersion")
+                        <BR/><b>Package Release Version</b> - $(echo $VERSION_REPORT | jq -r ".result.ReleaseVersion")
+                        <BR/><b>CommitId</b> - $(echo $VERSION_REPORT | jq -r ".Tag")
+                        <BR/><b>Code Coverage</b> - $(echo $VERSION_REPORT | jq -r ".result.CodeCoverage.apexCodeCoveragePercentage")
+                        <BR/><b>Code Coverage check passed</b> - $(echo $VERSION_REPORT | jq -r ".result.HasPassedCodeCoverageCheck")
+                        <BR/><b>Is Validation Skipped?</b> - $(echo $VERSION_REPORT | jq -r ".result.ValidationSkipped")"
                 break
             else
                 sleep 5
@@ -156,4 +162,35 @@ function isUpgrade() {
         iterator=$((iterator+1))
     done
     echo $IS_REQUEST_UPGRADE
+}
+
+function checkDependencyVersions() {
+    local VERSIONS_PACKAGE=$(echo $2 | jq -r ".packageDirectories | map(select(.package == \"$1\")) | .[0].dependencies")
+    local ARRAY=($(echo $VERSIONS_PACKAGE | jq -r '.[] | keys[] as $k | "\(.[$k])"'))
+    VERSION_MISMATCH=0
+    for ((iterator=0; iterator<${#ARRAY[@]}; iterator++))
+    do
+        local DEP_PACKAGE=${ARRAY[iterator]}
+        # query in loop due to restrictions on the object
+        local DEV_HUB_VERSION=$(queryPackageByName $DEP_PACKAGE | jq -r '"\(.result.records[0].MajorVersion)"+"."+"\(.result.records[0].MinorVersion)"+"."+"\(.result.records[0].PatchVersion)"')
+        iterator=$((iterator+1)) # access version
+        local SFDX_JSON_VERSION=$(echo ${ARRAY[iterator]} | cut -d "." -f1,2,3)
+        if [ "$DEV_HUB_VERSION" != "$SFDX_JSON_VERSION" ]
+        then
+            VERSION_MISMATCH=1
+            echo "Dependencies version in sfdx project json ($SFDX_JSON_VERSION) do not match with latest Devhub version ($DEV_HUB_VERSION) for package $DEP_PACKAGE"
+        fi
+    done
+
+    if [ "$VERSION_MISMATCH" = "1" ] 
+    then
+        if [ "$DEPDENCY_VAL" = "true" ]
+        then
+            echo "ERROR! One or more dependency package versions are not upgraded to latest versions. Exiting.."
+            sendNotification --statuscode "1" --message "Dependency package versions not upgraded" \
+                        --details "One or more dependency package versions for $1 are not upgraded to latest available devhub version. Please check logs for more details."
+        else
+            echo "WARNING! One or more dependency package versions are not upgraded to latest versions"
+        fi
+    fi
 }

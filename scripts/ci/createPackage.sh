@@ -24,6 +24,8 @@ function packageCreate() {
             # TODO: CREATE PACKAGE BEFORE CREATING VERSION
         else # package with name found
             echo "$P_NAME found, continue to create package version"
+            # get package version id
+            PACKAGE_Id=$(echo $QUERY_RESPONSE | jq -r ".result.records | map(select(.Package2.Name == \"$P_NAME\"))  | .[0].Package2Id")
             # get devhub package version
             P_VERSION_DEVHUB=$(echo $QUERY_RESPONSE | jq -r '"\(.result.records[0].MajorVersion)"+"."+"\(.result.records[0].MinorVersion)"+"."+"\(.result.records[0].PatchVersion)"')
             if [ "$P_VERSION_DEVHUB" = "$P_VERSION_SFDX_JSON" ]
@@ -35,9 +37,10 @@ function packageCreate() {
                     sendNotification --statuscode "1" --message "Requested version is already released" \
                         --details "Requested version $P_VERSION_SFDX_JSON is already released, please increase either major, minor or patch version."
                 else # create package version
+                    checkDependencyVersions "$P_NAME" "$SFDX_JSON"
                     echo "Creating next beta version ($P_VERSION_SFDX_JSON) for package $P_NAME ..."
                     createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
-                        --package $P_NAME --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME \
+                        --package $PACKAGE_Id --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME \
                         --wait 30 --definitionfile $DEFINITIONFILE --versionnumber $P_VERSION_SFDX_JSON
                 fi
             else
@@ -45,9 +48,10 @@ function packageCreate() {
                 # check if the package version requested is downgrading
                 if [ "$(isUpgrade ${P_VERSION_DEVHUB//"."/ } ${P_VERSION_SFDX_JSON//"."/ })" = "1" ]
                 then # create package version
+                    checkDependencyVersions "$P_NAME" "$SFDX_JSON"
                     echo "Creating next beta version ($P_VERSION_SFDX_JSON) for package $P_NAME ..."
                     createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
-                        --package $P_NAME --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME --wait 30 --definitionfile $DEFINITIONFILE
+                        --package $PACKAGE_Id --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME --wait 30 --definitionfile $DEFINITIONFILE
                 else # error! package version is downgrading
                     echo "Cannot downgrade a package version from $P_VERSION_DEVHUB to $P_VERSION_SFDX_JSON."
                     sendNotification --statuscode "1" --message "Cannot downgrade a package version" \
