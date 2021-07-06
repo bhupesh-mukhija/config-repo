@@ -39,8 +39,8 @@ function packageCreate() {
                 else # create package version
                     checkDependencyVersions "$P_NAME" "$SFDX_JSON"
                     echo "Creating next beta version ($P_VERSION_SFDX_JSON) for package $P_NAME ..."
-                    createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
-                        --package $PACKAGE_Id --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME \
+                    #--sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
+                    createVersion --package $PACKAGE_Id --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME \
                         --wait 30 --definitionfile $DEFINITIONFILE --versionnumber $P_VERSION_SFDX_JSON
                 fi
             else
@@ -50,8 +50,8 @@ function packageCreate() {
                 then # create package version
                     checkDependencyVersions "$P_NAME" "$SFDX_JSON"
                     echo "Creating next beta version ($P_VERSION_SFDX_JSON) for package $P_NAME ..."
-                    createVersion --sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
-                        --package $PACKAGE_Id --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME --wait 30 --definitionfile $DEFINITIONFILE
+                    #--sourcepath $(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].path") \
+                    createVersion --package $PACKAGE_Id --tag $(git rev-parse --short "$GITHUB_SHA") --targetdevhubusername $TARGETDEVHUBUSERNAME --wait 30 --definitionfile $DEFINITIONFILE
                 else # error! package version is downgrading
                     echo "Cannot downgrade a package version from $P_VERSION_DEVHUB to $P_VERSION_SFDX_JSON."
                     sendNotification --statuscode "1" --message "Cannot downgrade a package version" \

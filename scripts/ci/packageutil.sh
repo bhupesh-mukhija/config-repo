@@ -113,8 +113,6 @@ function createVersion() {
                 echo "Created subscriber version id $P_SUB_VERSIONID"
                 local VERSION_REPORT=$(echo $(sfdx force:package:version:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --package=$P_SUB_VERSIONID --json --verbose))
                 handleSfdxResponse "$VERSION_REPORT"
-                echo $VERSION_REPORT | jq
-
                 sendNotification --statuscode "0" \
                     --message "Package creation successful" \
                     --details "New beta version of $VERSIONNUMBER for $PACKAGE created successfully with following details.
