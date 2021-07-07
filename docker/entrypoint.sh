@@ -5,7 +5,7 @@ source "/github/workspace/config/scripts/bash/utility.sh"
 source "/github/workspace/config/scripts/ci/createPackage.sh"
 
 # set path for sfdx
-PATH=/root/sfdx/bin:$PATH
+#PATH=/root/sfdx/bin:$PATH
 sfdx --version
 sfdx plugins --core
 CURRENT_BRANCH=$GITHUB_REF
