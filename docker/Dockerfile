@@ -1,7 +1,6 @@
 # Container image that runs your code
 FROM alpine:3.14
 
-#ARG SFDX_INSTALLER=sfdx-linux-x64.tar.xz
 ARG SFDX_URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/versions/7.108.0/d2f9bbd/sfdx-v7.108.0-d2f9bbd-linux-x64.tar.xz
 
 RUN mkdir /root/entrypoint
@@ -27,11 +26,11 @@ RUN    mkdir ~/sfdx \
     && mkdir ~/secrets \
     && ls -l root/ \
     && wget $SFDX_URL \
-    && echo $SFDX_URL | sed 's/.*\///' \
-    && tar xJf $(echo $SFDX_URL | sed 's/.*\///') -C ~/sfdx --strip-components 1 \
+    && SFDX_INSTALLER=$(echo $SFDX_URL | sed 's/.*\///') \
+    && tar xJf $SFDX_INSTALLER -C ~/sfdx --strip-components 1 \
     && PATH=/root/sfdx/bin:$PATH \
     && which sfdx \
     && rm ~/sfdx/bin/node \
     && ln -s /usr/local/bin/node ~/sfdx/bin/node \
     && sfdx --version \
-    && rm $SFDX_URL
+    && rm $SFDX_INSTALLER
