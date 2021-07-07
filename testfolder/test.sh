@@ -203,6 +203,10 @@ function dependenciesTest() {
         fi
     fi
 }
+
+function spiltString() {
+    URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/versions/7.108.0/d2f9bbd/sfdx-v7.108.0-d2f9bbd-linux-x64.tar.xz
+    echo $URL | sed 's/.*\///
+'}
 #dependenciesTest
-URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/versions/7.108.0/d2f9bbd/sfdx-v7.108.0-d2f9bbd-linux-x64.tar.xz
-echo $URL | sed 's/.*\///'
+echo "Script ran on failure"
