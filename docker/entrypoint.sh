@@ -1,8 +1,8 @@
 #!/bin/bash
 # add bash files from config repo
 set -e # exit on error
-source "/github/workspace/config/scripts/bash/utility.sh"
-source "/github/workspace/config/scripts/ci/createPackage.sh"
+source "$SCRIPTS_PATH/config/scripts/bash/utility.sh"
+source "$SCRIPTS_PATH/config/scripts/ci/createPackage.sh"
 
 # set path for sfdx
 PATH=/root/sfdx/bin:$PATH
