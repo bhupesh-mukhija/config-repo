@@ -8,6 +8,9 @@ inputs:
   operation: # operation
     description: 'Dev hub secret for authrization in container'
     required: true
+outputs:
+  package_version_id:
+    description: 'pacakage version id from package creation job'
 runs:
   using: 'docker'
   image: '../docker/Dockerfile'

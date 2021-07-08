@@ -109,9 +109,9 @@ function createVersion() {
             if [ $REQ_STATUS = "Success" ]
             then
                 echo "Package creation successful.."
-                local P_SUB_VERSIONID=$(echo $RESP_REPORT | jq -r ".result[0].SubscriberPackageVersionId")
-                echo "Created subscriber version id $P_SUB_VERSIONID"
-                local VERSION_REPORT=$(echo $(sfdx force:package:version:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --package=$P_SUB_VERSIONID --json --verbose))
+                SUBSCRIBER_PACKAGE_VERSION=$(echo $RESP_REPORT | jq -r ".result[0].SubscriberPackageVersionId")
+                echo "Created subscriber version id $SUBSCRIBER_PACKAGE_VERSION"
+                local VERSION_REPORT=$(echo $(sfdx force:package:version:report --targetdevhubusername=$TARGETDEVHUBUSERNAME --package=$SUBSCRIBER_PACKAGE_VERSION --json --verbose))
                 handleSfdxResponse "$VERSION_REPORT"
                 sendNotification --statuscode "0" \
                     --message "Package creation successful" \

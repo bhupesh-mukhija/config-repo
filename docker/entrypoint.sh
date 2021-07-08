@@ -22,7 +22,7 @@ TARGETDEVHUBUSERNAME="devhubuser" # setup devhubuser alias
 echo $DEV_HUB_URL > /root/secrets/devhub.txt # save the devhub org secret
 echo "Authorizing devhub..."
 RESPONSE=$(authorizeOrg "/root/secrets/devhub.txt" $TARGETDEVHUBUSERNAME)
-handleSfdxResponse "$RESPONSE" "DX DevHub Authrization Failed" "Failed at $GITHUB_SERVER_URL/$GITHUB_REPOSITORY repository"
+handleSfdxResponse "$RESPONSE" "DX DevHub Authorization Failed" "Failed at $GITHUB_SERVER_URL/$GITHUB_REPOSITORY repository"
 
 if [ "$1" = "create_version" ]
 then
@@ -30,6 +30,9 @@ then
     TITLE="Package Creation Notifications"
     VALIDATE_DEPENDENCY_ERROR=$ERR_DEPENDENCY_VALIDATION
     packageCreate
+    echo "::set-output name=package_version_id::$SUBSCRIBER_PACKAGE_VERSION"
+elif [ "$1" = "install_version" ]
+    echo "Package version request.."
 else
     echo "Validation Request.."
 fi
