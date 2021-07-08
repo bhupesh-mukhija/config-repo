@@ -31,8 +31,6 @@ then
     VALIDATE_DEPENDENCY_ERROR=$ERR_DEPENDENCY_VALIDATION
     packageCreate
     echo "::set-output name=package_version_id::$SUBSCRIBER_PACKAGE_VERSION"
-elif [ "$1" = "install_version" ]
-    echo "Package version request.."
 else
     echo "Validation Request.."
 fi
