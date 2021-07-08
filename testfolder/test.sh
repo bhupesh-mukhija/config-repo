@@ -206,7 +206,15 @@ function dependenciesTest() {
 
 function spiltString() {
     URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/versions/7.108.0/d2f9bbd/sfdx-v7.108.0-d2f9bbd-linux-x64.tar.xz
-    echo $URL | sed 's/.*\///
-'}
+    echo $URL | sed 's/.*\///'
+}
 #dependenciesTest
-echo "Script ran on failure"
+#echo "Script ran on failure"
+
+USE_SFDX_BRANCH=$(cat ../docker/config.json | jq '.useBranch')
+DEPDENCY_VAL=$(cat ../docker/config.json | jq '.dependecyValidation')
+ENDPOINT=$(cat ../docker/config.json | jq '.notifications | map(select(.type == "teams")) | .[0].recipients | map(select(.role) == "ci")')
+
+echo $USE_SFDX_BRANCH
+echo $DEPDENCY_VAL
+echo $ENDPOINT | jq

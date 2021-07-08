@@ -1,5 +1,5 @@
 #!/bin/bash
-source "/github/workspace/config/scripts/ci/globalutil.sh"
+source "$SCRIPTS_PATH/config/scripts/ci/globalutil.sh"
 
 function readPackageParams {
     while [[ $# -gt 0 ]] # for each positional parameter
