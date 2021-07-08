@@ -1,13 +1,13 @@
 #!/bin/bash
-source "/github/workspace/config/scripts/bash/utility.sh"
-source "/github/workspace/config/scripts/ci/notificationutil.sh"
-source "/github/workspace/config/scripts/ci/globalutil.sh"
-source "/github/workspace/config/scripts/ci/packageutil.sh"
+source "$SCRIPTS_PATH/config/scripts/bash/utility.sh"
+source "$SCRIPTS_PATH/config/scripts/ci/notificationutil.sh"
+source "$SCRIPTS_PATH/config/scripts/ci/globalutil.sh"
+source "$SCRIPTS_PATH/config/scripts/ci/packageutil.sh"
 
 function packageCreate() {
     # get sfdx json file
-    DEFINITIONFILE="/github/workspace/config/scratch-org-config/project-scratch-def.json"
-    SFDX_JSON=$(cat /github/workspace/sfdx-project.json)
+    DEFINITIONFILE="$SCRIPTS_PATH/config/scratch-org-config/project-scratch-def.json"
+    SFDX_JSON=$(cat $SCRIPTS_PATH/sfdx-project.json)
     P_NAME=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.default == true))  | .[0].package")
     echo "Package name found : $P_NAME"
     if [ -n "$P_NAME" ]

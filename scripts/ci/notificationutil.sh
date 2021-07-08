@@ -47,7 +47,7 @@ function readNotificationParams() {
 }
 
 function sendTeamsNotification() {
-    WEBHOOK_URL="https://sage365.webhook.office.com/webhookb2/1684ded0-b7a0-46f0-af48-d46b403ea75b@3e32dd7c-41f6-492d-a1a3-c58eb02cf4f8/IncomingWebhook/42190d8ce99e4602af2d5c9e8ead3157/29be0f97-c2eb-4d1f-8b31-93c80f2b466e"
+    WEBHOOK_URL=$1
 
     # Post to Microsoft Teams.
     echo $(curl -sb -H "Content-Type: application/json" -d "${TEAM_NOTIFIATION_JSON}" "${WEBHOOK_URL}")
@@ -60,13 +60,13 @@ function sendNotification() {
         STATUS="SUCCESS"
         prepareNotificationJson
         echo "Success! Sending teams notification."
-        sendTeamsNotification
+        sendTeamsNotification "https://sage365.webhook.office.com/webhookb2/1684ded0-b7a0-46f0-af48-d46b403ea75b@3e32dd7c-41f6-492d-a1a3-c58eb02cf4f8/IncomingWebhook/42190d8ce99e4602af2d5c9e8ead3157/29be0f97-c2eb-4d1f-8b31-93c80f2b466e"
         exit 0
     else # failure notification
         STATUS="FAILURE"
         prepareNotificationJson
         echo "Failed! Sending teams notification."
-        sendTeamsNotification
+        sendTeamsNotification "https://sage365.webhook.office.com/webhookb2/1684ded0-b7a0-46f0-af48-d46b403ea75b@3e32dd7c-41f6-492d-a1a3-c58eb02cf4f8/IncomingWebhook/42190d8ce99e4602af2d5c9e8ead3157/29be0f97-c2eb-4d1f-8b31-93c80f2b466e"
         exit 1
     fi
 }

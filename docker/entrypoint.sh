@@ -8,15 +8,14 @@ source "$SCRIPTS_PATH/config/scripts/ci/createPackage.sh"
 PATH=/root/sfdx/bin:$PATH
 sfdx --version
 sfdx plugins --core
-CURRENT_BRANCH=$GITHUB_REF
-echo "Current branch : $CURRENT_BRANCH"
-USE_SFDX_BRANCH=$USE_BRANCH
-DEPDENCY_VAL=$ERR_DEPENDENCY_VALIDATION
+CURRENT_BRANCH=$(echo $BRANCH | sed 's/.*\///')
+USE_SFDX_BRANCH=$(cat $SCRIPTS_PATH/config/docker/config.json | jq '.useBranch')
+DEPDENCY_VAL=$(cat $SCRIPTS_PATH/config/docker/config.json | jq '.dependecyValidation')
 
 echo "Remove Comments start *****************************"
 echo "Branch: $CURRENT_BRANCH"
 echo "Use Sfdx Branch : $USE_SFDX_BRANCH"
-echo "Dependency validation $ERR_DEPENDENCY_VALIDATION"
+echo "Dependency validation $DEPDENCY_VAL"
 echo "Remove Comments end *****************************"
 
 TARGETDEVHUBUSERNAME="devhubuser" # setup devhubuser alias
