@@ -1,0 +1,20 @@
+# action.yml
+name: 'Perform Action'
+description: 'Create docker container and run requested operation'
+inputs:
+  dev-hub:  # devhub
+    description: 'Dev hub secret for authrization in container'
+    required: true
+  operation: # operation
+    description: 'Dev hub secret for authrization in container'
+    required: true
+outputs:
+  output_step_var:
+    description: 'pacakage version id from package creation job'
+    value: ${{ steps.output_variable_step.outputs.output_var }}
+runs:
+  using: 'composite'
+  steps:
+    - id: output_variable_step
+      run: echo "::set-output name=output_var::$(echo 'Output data for variable')"
+      shell: bash
