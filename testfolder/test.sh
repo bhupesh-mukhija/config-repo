@@ -208,23 +208,49 @@ function spiltString() {
     URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/versions/7.108.0/d2f9bbd/sfdx-v7.108.0-d2f9bbd-linux-x64.tar.xz
     echo $URL | sed 's/.*\///'
 }
-#dependenciesTest
-#echo "Script ran on failure"
 
-USE_SFDX_BRANCH=$(cat ../docker/config.json | jq '.useBranch')
-DEPDENCY_VAL=$(cat ../docker/config.json | jq '.dependecyValidation')
-ENDPOINT=$(cat ../docker/config.json | jq '.notifications | map(select(.type == "teams")) | .[0].recipients | map(select(.role) == "ci")')
+function readingJson() {
+    USE_SFDX_BRANCH=$(cat ../docker/config.json | jq '.useBranch')
+    DEPDENCY_VAL=$(cat ../docker/config.json | jq '.dependecyValidation')
+    ENDPOINT=$(cat ../docker/config.json | jq '.notifications | map(select(.type == "teams")) | .[0].recipients | map(select(.role) == "ci")')
 
-echo $USE_SFDX_BRANCH
-echo $DEPDENCY_VAL
-echo $ENDPOINT | jq
+    echo $USE_SFDX_BRANCH
+    echo $DEPDENCY_VAL
+    echo $ENDPOINT | jq
 
-if [ "$1" == "create_version" ]
-then
-    echo "Create"
-elif [ "$1" == "install_version" ]
-then
-    echo "Install"
-else
-    echo "validate"
-fi
+    if [ "$1" == "create_version" ]
+    then
+        echo "Create"
+    elif [ "$1" == "install_version" ]
+    then
+        echo "Install"
+    else
+        echo "validate"
+    fi
+}
+
+function installPackage() {
+    TARGETDEVHUBUSERNAME=sagedevorg
+    TARGETUSERNAME=mydevhub1
+    SCRIPTS_PATH=../..
+
+
+
+    echo "Preparting package details..."
+    # get package name from sfdx project json
+    local PACKAGE_NAME=$(cat $SCRIPTS_PATH/sfdx-project.json | jq -r ".packageDirectories | map(select(.default == true))  | .[0].package")
+    # query package from devhub
+    #QUERY_RESPONSE=$(queryPackageByName1 $PACKAGE_NAME)
+    local SUBSCRIBER_PACKAGE_VERSION=$(echo $(queryPackageByName1 $PACKAGE_NAME) | jq -r '.result.records[0].SubscriberPackageVersion.attributes.url' | sed 's/.*\///')
+    echo $SUBSCRIBER_PACKAGE_VERSION
+    # get package report for details
+    local PACKAGE_REPORT=$(sfdx force:package:version:report --targetdevhubusername=$TARGETDEVHUBUSERNAME -p $SUBSCRIBER_PACKAGE_VERSION --json)
+    echo "Package to be installed"
+    echo $PACKAGE_REPORT | jq # TODO: Parse json and show formatted
+    # TODO: Make it async
+    local PACKAGE_REQUEST=$(sfdx force:package:install --targetusername=$TARGETUSERNAME --package=$SUBSCRIBER_PACKAGE_VERSION --wait=30)
+    echo $PACKAGE_REQUEST
+}
+getLatestSubscriberVersion
+#PACKAGE_VERSION=$(getLatestSubscriberVersion)
+#echo "Package version to be installed $PACKAGE_VERSION
