@@ -1,6 +1,6 @@
 #!/bin/bash
-echo "test"
-docker --version
-docker images -a
-docker images -a -q
-docker ps -a
+source "$SCRIPTS_PATH/config/scripts/ci/packageutil.sh"
+
+function installPackage() {
+    echo "Reached HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+}

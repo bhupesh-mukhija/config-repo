@@ -218,3 +218,13 @@ ENDPOINT=$(cat ../docker/config.json | jq '.notifications | map(select(.type == 
 echo $USE_SFDX_BRANCH
 echo $DEPDENCY_VAL
 echo $ENDPOINT | jq
+
+if [ "$1" == "create_version" ]
+then
+    echo "Create"
+elif [ "$1" == "install_version" ]
+then
+    echo "Install"
+else
+    echo "validate"
+fi
