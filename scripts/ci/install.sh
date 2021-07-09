@@ -17,4 +17,5 @@ function installPackage() {
     echo $PACKAGE_REPORT | jq # TODO: Parse json and show formatted
     # TODO: Make it async use loop to report on create
     sfdx force:package:install --targetusername=$TARGETUSERNAME --package=$SUBSCRIBER_PACKAGE_VERSION --wait=30
+    # test
 }
