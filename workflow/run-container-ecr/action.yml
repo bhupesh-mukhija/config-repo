@@ -9,8 +9,16 @@ inputs:
     description: 'url for docker image'
     required: true
 runs:
-  using: 'docker'
-  image: ${{ inputs.imageurl }} #'../docker/Dockerfile'
-  args:
-    - ${{ inputs.operation }}
-    - ${{ inputs.imageurl }}
+  using: 'composite'
+  #using: 'composite'
+  #image: ${{ inputs.imageurl }} #'../docker/Dockerfile'
+  #args:
+    #- ${{ inputs.operation }}
+    #- ${{ inputs.imageurl }}
+  steps:
+    - name: Run Container
+      run: docker run ${{ inputs.imageurl }}
+      shell: bash
+    #- name: Run test
+    #  run: actions/docker/cli@master
+      
