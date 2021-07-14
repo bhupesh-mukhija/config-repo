@@ -17,7 +17,7 @@ runs:
     #- ${{ inputs.imageurl }}
   steps:
     - name: Run Container
-      run: docker run ${{ inputs.imageurl }}
+      run: docker run ${{ inputs.imageurl }} -e DEV_HUB_URL -e BRANCH -e SCRIPTS_PATH -v "/var/run/docker.sock":"/var/run/docker.sock" -v "/home/runner/work/_temp/_github_home":"/github/home" -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" -v "/home/runner/work/dxgithubworkflow/dxgithubworkflow":"/github/workspace"
       shell: bash
     #- name: Run test
     #  run: actions/docker/cli@master
