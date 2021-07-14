@@ -1,0 +1,16 @@
+# action.yml
+name: 'Perform Action'
+description: 'Create docker container and run requested operation'
+inputs:
+  operation: # operation
+    description: 'Process to execute'
+    required: true
+  imageurl: # url for docker image
+    description: 'url for docker image'
+    required: true
+runs:
+  using: 'docker'
+  image: ${{ inputs.imageurl }} #'../docker/Dockerfile'
+  args:
+    - ${{ inputs.operation }}
+    - ${{ inputs.imageurl }}
