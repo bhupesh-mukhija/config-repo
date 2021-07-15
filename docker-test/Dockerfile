@@ -4,6 +4,7 @@ FROM alpine:3.14
 ARG SFDX_URL=https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
 
 RUN mkdir /root/entrypoint
+RUN mkdir -p /github/{workspace}
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY entrypoint.sh /root/entrypoint/entrypoint.sh
