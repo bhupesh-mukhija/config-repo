@@ -1,9 +1,16 @@
 #!/bin/bash
 # add bash files from config repo
 set -e # exit on error
-source "$SCRIPTS_PATH/config/scripts/bash/utility.sh"
-source "$SCRIPTS_PATH/config/scripts/ci/createPackage.sh"
-source "$SCRIPTS_PATH/config/scripts/ci/install.sh"
+#source "$SCRIPTS_PATH/config/scripts/bash/utility.sh"
+#source "$SCRIPTS_PATH/config/scripts/ci/createPackage.sh"
+#source "$SCRIPTS_PATH/config/scripts/ci/install.sh"
+
+echo "Inside container"
+pwd
+ls -l
+ls -l /github
+ls -l /github/home
+ls -l /github/workflow
 
 # set path for sfdx
 PATH=/root/sfdx/bin:$PATH

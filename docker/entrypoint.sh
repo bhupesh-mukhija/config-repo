@@ -1,14 +1,6 @@
 #!/bin/bash
 # add bash files from config repo
 set -e # exit on error
-
-echo "Inside container"
-pwd
-ls -l
-ls -l /github
-ls -l /github/home
-ls -l /github/workflow
-
 source "$SCRIPTS_PATH/config/scripts/bash/utility.sh"
 source "$SCRIPTS_PATH/config/scripts/ci/createPackage.sh"
 source "$SCRIPTS_PATH/config/scripts/ci/install.sh"
