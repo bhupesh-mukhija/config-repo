@@ -13,6 +13,6 @@ outputs:
     description: 'package version id from package creation job'
 runs:
   using: 'docker'
-  image: ${{ inputs.imageurl }} #'../docker/Dockerfile'
+  image: '../docker/Dockerfile'
   args:
     - ${{ inputs.operation }}
