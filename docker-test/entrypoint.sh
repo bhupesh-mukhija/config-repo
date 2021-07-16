@@ -11,6 +11,8 @@ ls -l
 ls -l /github
 ls -l /github/home
 ls -l /github/workflow
+ls -l /github/workspace
+ls -l /root
 
 # set path for sfdx
 PATH=/root/sfdx/bin:$PATH
