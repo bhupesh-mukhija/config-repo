@@ -33,4 +33,8 @@ RUN    mkdir ~/sfdx \
     && rm ~/sfdx/bin/node \
     && ln -s /usr/local/bin/node ~/sfdx/bin/node \
     && sfdx --version \
-    && rm $SFDX_INSTALLER
+    && rm $SFDX_INSTALLER \
+    && mkdir -p /operation/home \
+    && mkdir -p /operation/workspace \
+    && mkdir -p /operation/file_commands \
+    && mkdir -p /operation/workflow

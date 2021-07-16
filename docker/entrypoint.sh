@@ -5,9 +5,6 @@ source "$SCRIPTS_PATH/config/scripts/bash/utility.sh"
 source "$SCRIPTS_PATH/config/scripts/ci/createPackage.sh"
 source "$SCRIPTS_PATH/config/scripts/ci/install.sh"
 
-ls -l
-ls -l github/
-ls -l github/workspace/
 # set path for sfdx
 PATH=/root/sfdx/bin:$PATH
 sfdx --version
