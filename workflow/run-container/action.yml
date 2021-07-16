@@ -15,7 +15,7 @@ runs:
     # run docker container with volume mapping
     - name: Run Container
       run: docker run -e DEV_HUB_URL -e BRANCH -e SCRIPTS_PATH
-        --workdir /github/workspace 
+        --workdir /operation/workspace 
         -v "/var/run/docker.sock":"/var/run/docker.sock" 
         -v "/home/runner/work/_temp/_github_home":"/operation/home" 
         -v "/home/runner/work/_temp/_github_workflow":"/operation/workflow" 
