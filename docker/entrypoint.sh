@@ -9,6 +9,7 @@ source "$SCRIPTS_PATH/config/scripts/ci/install.sh"
 PATH=/root/sfdx/bin:$PATH
 sfdx --version
 sfdx plugins --core
+COMMIT_ID=$(git rev-parse --short "$LATEST_COMMIT")
 CURRENT_BRANCH=$(echo $BRANCH | sed 's/.*\///')
 USE_SFDX_BRANCH=$(cat $SCRIPTS_PATH/config/docker/config.json | jq '.useBranch')
 DEPDENCY_VAL=$(cat $SCRIPTS_PATH/config/docker/config.json | jq '.dependecyValidation')
