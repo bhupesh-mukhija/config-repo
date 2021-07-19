@@ -14,7 +14,7 @@ runs:
   steps:
     # run docker container with volume mapping
     - name: Run Container
-      run: docker run -e DEV_HUB_URL -e BRANCH -e SCRIPTS_PATH -e GITHUB_SHA
+      run: docker run -e DEV_HUB_URL -e BRANCH -e SCRIPTS_PATH -e LATEST_COMMIT
         --workdir /operation/workspace 
         -v "/var/run/docker.sock":"/var/run/docker.sock" 
         -v "/home/runner/work/_temp/_github_home":"/operation/home" 

@@ -14,9 +14,13 @@ function init() {
     echo "Github env vars ***************************************"
     echo $GITHUB_SERVER_URL
     echo $GITHUB_REPOSITORY
+    echo "SHA"
     echo $GITHUB_SHA
+    echo "Latest Commit"
     echo $LATEST_COMMIT
+    echo "SHA SHORT"
     echo $(git rev-parse --short $GITHUB_SHA)
+    echo "SHORT LC"
     echo $(git rev-parse --short $LATEST_COMMIT)
 
     #TARGETDEVHUBUSERNAME="devhubuser" # setup devhubuser alias
