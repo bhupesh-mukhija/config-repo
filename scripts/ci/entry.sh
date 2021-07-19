@@ -15,6 +15,9 @@ function init() {
     echo $GITHUB_SERVER_URL
     echo $GITHUB_REPOSITORY
     echo $GITHUB_SHA
+    echo $LATEST_COMMIT
+    echo $(git rev-parse --short $GITHUB_SHA)
+    echo $(git rev-parse --short $LATEST_COMMIT)
 
     #TARGETDEVHUBUSERNAME="devhubuser" # setup devhubuser alias
     #echo $DEV_HUB_URL > /root/secrets/devhub.txt # save the devhub org secret
