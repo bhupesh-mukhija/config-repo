@@ -73,7 +73,7 @@ function sendNotification() {
 
 function sendNotificationWoStatus() {
     STATUS="FAILURE"
-    COLOUR="00d793"
+    COLOUR="d70000"
     prepareNotificationJson
     echo "Failed! Sending teams notification."
     sendTeamsNotification "https://sage365.webhook.office.com/webhookb2/1684ded0-b7a0-46f0-af48-d46b403ea75b@3e32dd7c-41f6-492d-a1a3-c58eb02cf4f8/IncomingWebhook/42190d8ce99e4602af2d5c9e8ead3157/29be0f97-c2eb-4d1f-8b31-93c80f2b466e"
