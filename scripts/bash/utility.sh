@@ -88,7 +88,3 @@ function readParams {
         esac
     done
 }
-
-function authorizeOrg() {
-    echo $(sfdx auth:sfdxurl:store --sfdxurlfile=$1 --setalias=$2 --json)
-}

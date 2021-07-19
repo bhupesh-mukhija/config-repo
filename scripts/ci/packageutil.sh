@@ -130,7 +130,6 @@ function createVersion() {
             else
                 sleep 5
                 echo "Request status $REQ_STATUS"
-                RESP_REPORT=$($CMD_REPORT)
             fi
         fi
     done

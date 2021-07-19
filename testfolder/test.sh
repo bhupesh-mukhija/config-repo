@@ -233,9 +233,6 @@ function installPackage() {
     TARGETDEVHUBUSERNAME=sagedevorg
     TARGETUSERNAME=mydevhub1
     SCRIPTS_PATH=../..
-
-
-
     echo "Preparting package details..."
     # get package name from sfdx project json
     local PACKAGE_NAME=$(cat $SCRIPTS_PATH/sfdx-project.json | jq -r ".packageDirectories | map(select(.default == true))  | .[0].package")

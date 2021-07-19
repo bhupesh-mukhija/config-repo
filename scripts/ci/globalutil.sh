@@ -10,3 +10,7 @@ function handleSfdxResponse() {
             --details "$(echo $RESPONSE | jq -r ".stack")"
     fi
 }
+
+function authorizeOrg() {
+    echo $(sfdx auth:sfdxurl:store --sfdxurlfile=$1 --setalias=$2 --json)
+}

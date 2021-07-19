@@ -1,5 +1,5 @@
 #!/bin/bash
-source "$SCRIPTS_PATH/config/scripts/bash/utility.sh"
+source "$SCRIPTS_PATH/config/scripts/ci/globalutil.sh"
 source "$SCRIPTS_PATH/config/scripts/ci/createPackage.sh"
 source "$SCRIPTS_PATH/config/scripts/ci/install.sh"
 
@@ -16,6 +16,7 @@ function init() {
     echo $DEV_HUB_URL > /root/secrets/devhub.txt # save the devhub org secret
     echo "Authorizing devhub..."
     RESPONSE=$(authorizeOrg "/root/secrets/devhub.txt" $TARGETDEVHUBUSERNAME)
+    echo $RESPONSE
     # TODO: REMVOE DEPENDENCY FROM GITHUB URLS
     handleSfdxResponse "$RESPONSE" "DX DevHub Authorization Failed" "Failed at $GITHUB_SERVER_URL/$GITHUB_REPOSITORY repository"
 
@@ -32,10 +33,11 @@ function init() {
         echo $ENV_URL > /root/secrets/environment.txt # save the devhub org secret
         echo "Authorizing target environment..."
         TARGETUSERNAME="envuser"
-        RESPONSE=$(authorizeOrg "/root/secrets/environment.txt" $TARGETUSERNAME)
+        RESPONSE=$(authorizeOrg "/root/secrets/environment.txt" $TARGETUSERNAME) 
+        echo $RESPONSE
         # TODO: REMVOE DEPENDENCY FROM GITHUB URLS
         handleSfdxResponse "$RESPONSE" "DX DevHub Authorization Failed" "Failed at $GITHUB_SERVER_URL/$GITHUB_REPOSITORY repository"
-        installPackage
+        #installPackage
     else
         echo "Validation Request.."
     fi

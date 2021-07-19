@@ -1,5 +1,4 @@
 #!/bin/bash
-source "$SCRIPTS_PATH/config/scripts/bash/utility.sh"
 source "$SCRIPTS_PATH/config/scripts/ci/notificationutil.sh"
 source "$SCRIPTS_PATH/config/scripts/ci/globalutil.sh"
 source "$SCRIPTS_PATH/config/scripts/ci/packageutil.sh"
