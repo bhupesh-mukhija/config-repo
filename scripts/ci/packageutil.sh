@@ -122,7 +122,7 @@ function createVersion() {
                         <BR/><b>Ancestor Version Id</b> - $(echo $VERSION_REPORT | jq -r ".result.AncestorId")
                         <BR/><b>Ancestor Version</b> - $(echo $VERSION_REPORT | jq -r ".result.AncestorVersion")
                         <BR/><b>Package Release Version</b> - $(echo $VERSION_REPORT | jq -r ".result.ReleaseVersion")
-                        <BR/><b>CommitId</b> - $(echo $VERSION_REPORT | jq -r ".Tag")
+                        <BR/><b>CommitId</b> - $(echo $VERSION_REPORT | jq -r ".result.Tag")
                         <BR/><b>Code Coverage</b> - $(echo $VERSION_REPORT | jq -r ".result.CodeCoverage.apexCodeCoveragePercentage")
                         <BR/><b>Code Coverage check passed</b> - $(echo $VERSION_REPORT | jq -r ".result.HasPassedCodeCoverageCheck")
                         <BR/><b>Is Validation Skipped?</b> - $(echo $VERSION_REPORT | jq -r ".result.ValidationSkipped")"
