@@ -3,7 +3,7 @@ function handleSfdxResponse() {
     if [ "$(echo $RESPONSE | jq -r ".status")" = "1" ]
     then
         echo "******* SFDX Command Failed *******"
-        echo $QUERY_RESPONSE | jq
+        echo $RESPONSE | jq
         STACK=$(echo $RESPONSE | jq -r ".name,.message,.stack")
         sendNotification --statuscode $(echo $RESPONSE | jq -r ".status") \
             --message "$(echo $RESPONSE | jq -r ".name"): $(echo $RESPONSE | jq -r ".message")" \
