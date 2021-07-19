@@ -15,8 +15,7 @@ function installPackage() {
     handleSfdxResponse "$PACKAGE_REPORT"
 
     echo "Package to be installed"
-    echo $PACKAGE_REPORT | jq # TODO: Parse json and show formatted
-    # TODO: Make it async use loop to report on create
+    #echo $PACKAGE_REPORT | jq # TODO: Parse json and show formatted
     RESPONSE_INSTALL=$(sfdx force:package:install --targetusername=$TARGETUSERNAME --package=$SUBSCRIBER_PACKAGE_VERSION --json)
     handleSfdxResponse "$RESPONSE_INSTALL"
     # test
@@ -33,11 +32,12 @@ function installPackage() {
             local STATUS=$(echo $CREATE_REPORT | jq -r ".result.Status")
             if [ $STATUS = "Success" ]
             then
+                local INSTANCE=$(echo $AUTH_RESPONSE | jq '.result.loginUrl')
                 echo "Package successfully installed.."
                 sendNotification --statuscode "0" \
                     --message "Package insatllation successful" \
                     --details "Package version <b>$VERSION_NUMBER</b> for <b>$PACKAGE_NAME</b> is installed successfully 
-                        in ."
+                        in instance $INSTANCE."
             else
                 sleep 5
                 echo "Request status $STATUS"
