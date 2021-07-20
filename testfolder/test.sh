@@ -260,3 +260,4 @@ P_VERSION_DEVHUB=$(echo $QUERY_RESPONSE | jq -r '"\(.result.records[0].MajorVers
 VERSION_DEVHUB=$(echo $QUERY_RESPONSE | jq -r '"\(.result.records[0].MajorVersion)"+"."+"\(.result.records[0].MinorVersion)"+"."+"\(.result.records[0].PatchVersion)"+"."+"\(.result.records[0].ReleaseVersion)"')
 echo $P_VERSION_DEVHUB
 echo $VERSION_DEVHUB
+echo ${VERSION_DEVHUB%.*}

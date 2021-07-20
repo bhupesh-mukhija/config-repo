@@ -11,24 +11,14 @@ function init() {
     CURRENT_BRANCH=$(echo $BRANCH | sed 's/.*\///')
     USE_SFDX_BRANCH=$(cat $SCRIPTS_PATH/config/docker/config.json | jq '.useBranch')
     DEPDENCY_VAL=$(cat $SCRIPTS_PATH/config/docker/config.json | jq '.dependecyValidation')
-    echo "Github env vars ***************************************"
-    echo $GITHUB_SERVER_URL
-    echo $GITHUB_REPOSITORY
-    echo "SHA"
-    echo $GITHUB_SHA
-    echo "Latest Commit"
-    echo $LATEST_COMMIT
-    echo "SHA SHORT"
-    echo $(git rev-parse --short $GITHUB_SHA)
-    echo "SHORT LC"
-    echo $(git rev-parse --short $LATEST_COMMIT)
 
     TARGETDEVHUBUSERNAME="devhubuser" # setup devhubuser alias
     echo $DEV_HUB_URL > /root/secrets/devhub.txt # save the devhub org secret
-    echo "Authorizing devhub..."
+    echo "Authorising devhub..."
     AUTH_RESPONSE=$(authorizeOrg "/root/secrets/devhub.txt" $TARGETDEVHUBUSERNAME)
     # TODO: REMVOE DEPENDENCY FROM GITHUB URLS
     handleSfdxResponse "$AUTH_RESPONSE" "DX DevHub Authorization Failed" "Failed at $GITHUB_SERVER_URL/$GITHUB_REPOSITORY repository"
+    echo "Success! DevHub authorised..."
 
     if [ "$OPERATION" = "create_version" ]
     then
@@ -46,6 +36,7 @@ function init() {
         AUTH_RESPONSE=$(authorizeOrg "/root/secrets/environment.txt" $TARGETUSERNAME) 
         # TODO: REMVOE DEPENDENCY FROM GITHUB URLS
         handleSfdxResponse "$AUTH_RESPONSE" "DX DevHub Authorization Failed" "Failed at $GITHUB_SERVER_URL/$GITHUB_REPOSITORY repository"
+        echo "Success! Environment authorised..."
         installPackage
     else
         echo "Validation Request.."
