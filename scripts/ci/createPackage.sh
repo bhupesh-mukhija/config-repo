@@ -18,6 +18,7 @@ function packageCreate() {
         QUERY_RESPONSE=$(queryPackageByName $P_NAME)
         handleSfdxResponse "$QUERY_RESPONSE"
         echo "Devhub Version until patch ********************************"
+        echo $QUERY_RESPONSE
         echo $VERSION_DEVHUB
         echo ${VERSION_DEVHUB%.*}
         if [ "$(echo $QUERY_RESPONSE | jq ".result.totalSize")" = "0" ]
