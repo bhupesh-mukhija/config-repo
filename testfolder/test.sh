@@ -3,7 +3,7 @@ source "../scripts/bash/utility.sh"
 source "../scripts/ci/notificationutil.sh"
 
 queryPackageByName1() {
-    local PACKAGE_QUERY_FIELDS=" Id, Name, Package2Id, Tag, Package2.Name, SubscriberPackageVersion.Dependencies, IsReleased, MajorVersion, MinorVersion, PatchVersion, CreatedDate, LastModifiedDate, AncestorId, Ancestor.MajorVersion, Ancestor.MinorVersion, Ancestor.PatchVersion "
+    local PACKAGE_QUERY_FIELDS=" Id, Name, Package2Id, Tag, Package2.Name, SubscriberPackageVersion.Dependencies, IsReleased, MajorVersion, MinorVersion, PatchVersion, ReleaseVersion, CreatedDate, LastModifiedDate, AncestorId, Ancestor.MajorVersion, Ancestor.MinorVersion, Ancestor.PatchVersion "
     echo $(sfdx force:data:soql:query -u $TARGETDEVHUBUSERNAME -t \
         -q "SELECT $PACKAGE_QUERY_FIELDS FROM Package2Version WHERE Package2.Name = '$1' ORDER BY LastModifiedDate DESC, CreatedDate DESC LIMIT 1" \
         --json)
@@ -252,5 +252,11 @@ function installPackage() {
 #PACKAGE_VERSION=$(getLatestSubscriberVersion)
 #echo "Package version to be installed $PACKAGE_VERSION
 
-var="1.2.3.0"
-echo ${var%.*}
+#var="1.2.3.0"
+#echo ${var%.*}
+TARGETDEVHUBUSERNAME="sagedevorg"
+QUERY_RESPONSE=$(queryPackageByName1 "salesforce-global-sales")
+P_VERSION_DEVHUB=$(echo $QUERY_RESPONSE | jq -r '"\(.result.records[0].MajorVersion)"+"."+"\(.result.records[0].MinorVersion)"+"."+"\(.result.records[0].PatchVersion)"')
+VERSION_DEVHUB=$(echo $QUERY_RESPONSE | jq -r '"\(.result.records[0].MajorVersion)"+"."+"\(.result.records[0].MinorVersion)"+"."+"\(.result.records[0].PatchVersion)"+"."+"\(.result.records[0].ReleaseVersion)"')
+echo $P_VERSION_DEVHUB
+echo $VERSION_DEVHUB

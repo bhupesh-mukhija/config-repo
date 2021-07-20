@@ -12,7 +12,7 @@ function packageCreate() {
     if [ -n "$P_NAME" ]
     then # if package name not found in sfdx project json (package not created yet)
         VERSION_SFDX_JSON=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.package == \"$P_NAME\")) | .[0].versionNumber" | cut -d "." -f1,2,3)
-        VERSION_DEVHUB=$(echo $QUERY_RESPONSE | jq -r '"\(.result.records[0].MajorVersion)"+"."+"\(.result.records[0].MinorVersion)"+"."+"\(.result.records[0].PatchVersion)""+"."+"\(.result.records[0].ReleaseVersion)"')
+        VERSION_DEVHUB=$(echo $QUERY_RESPONSE | jq -r '"\(.result.records[0].MajorVersion)"+"."+"\(.result.records[0].MinorVersion)"+"."+"\(.result.records[0].PatchVersion)"+"."+"\(.result.records[0].ReleaseVersion)"')
         echo "Query package details.."
         SUBTITLE="Create package version $P_NAME - $VERSION_SFDX_JSON"
         QUERY_RESPONSE=$(queryPackageByName $P_NAME)
