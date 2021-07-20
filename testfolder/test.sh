@@ -248,6 +248,9 @@ function installPackage() {
     local PACKAGE_REQUEST=$(sfdx force:package:install --targetusername=$TARGETUSERNAME --package=$SUBSCRIBER_PACKAGE_VERSION --wait=30)
     echo $PACKAGE_REQUEST
 }
-getLatestSubscriberVersion
+#getLatestSubscriberVersion
 #PACKAGE_VERSION=$(getLatestSubscriberVersion)
 #echo "Package version to be installed $PACKAGE_VERSION
+
+var="1.2.3.0"
+echo ${var%.*}
