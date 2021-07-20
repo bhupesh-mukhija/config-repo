@@ -11,12 +11,12 @@ function packageCreate() {
     echo "Package name found : $P_NAME"
     if [ -n "$P_NAME" ]
     then # if package name not found in sfdx project json (package not created yet)
-        VERSION_SFDX_JSON=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.package == \"$P_NAME\")) | .[0].versionNumber" | cut -d "." -f1,2,3)
-        VERSION_DEVHUB=$(echo $QUERY_RESPONSE | jq -r '"\(.result.records[0].MajorVersion)"+"."+"\(.result.records[0].MinorVersion)"+"."+"\(.result.records[0].PatchVersion)"+"."+"\(.result.records[0].ReleaseVersion)"')
         echo "Query package details.."
         SUBTITLE="Create package version $P_NAME - $VERSION_SFDX_JSON"
         QUERY_RESPONSE=$(queryPackageByName $P_NAME)
         handleSfdxResponse "$QUERY_RESPONSE"
+        VERSION_DEVHUB=$(echo $QUERY_RESPONSE | jq -r '"\(.result.records[0].MajorVersion)"+"."+"\(.result.records[0].MinorVersion)"+"."+"\(.result.records[0].PatchVersion)"+"."+"\(.result.records[0].ReleaseVersion)"')
+        VERSION_SFDX_JSON=$(echo $SFDX_JSON | jq -r ".packageDirectories | map(select(.package == \"$P_NAME\")) | .[0].versionNumber" | cut -d "." -f1,2,3)
         echo "Devhub Version until patch ********************************"
         echo $QUERY_RESPONSE
         echo $VERSION_DEVHUB
@@ -37,7 +37,7 @@ function packageCreate() {
                 # get package version id
                 PACKAGE_Id=$(echo $QUERY_RESPONSE | jq -r ".result.records | map(select(.Package2.Name == \"$P_NAME\"))  | .[0].Package2Id")
                 # get devhub package version
-                MAIN_VERSION_DEVHUB=$(echo ${VERSION_DEVHUB%.*})
+                MAIN_VERSION_DEVHUB=${VERSION_DEVHUB%.*}
                 # TODO REMOVE ECHO
                 echo "Devhub Version until patch ********************************"
                 echo $MAIN_VERSION_DEVHUB

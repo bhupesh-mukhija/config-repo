@@ -261,3 +261,5 @@ VERSION_DEVHUB=$(echo $QUERY_RESPONSE | jq -r '"\(.result.records[0].MajorVersio
 echo $P_VERSION_DEVHUB
 echo $VERSION_DEVHUB
 echo ${VERSION_DEVHUB%.*}
+DEVHUB_FULL=${VERSION_DEVHUB%.*}
+echo $DEVHUB_FULL
